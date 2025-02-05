@@ -1,0 +1,3 @@
+arreter le docker pour tester si la db est persistantes ou non 
+docker stop sqlite-server
+docker start sqlite-server 
