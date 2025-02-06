@@ -44,10 +44,10 @@ def init_db():
         
         # Validation des changements
         conn.commit()
-        print("Base de données initialisée avec succès")
+        print("Base de donnees initialisee avec succes")
         
     except Exception as e:
-        print(f"Erreur lors de l'initialisation de la base de données: {e}")
+        print(f"Erreur lors de l'initialisation de la base de donnees: {e}")
         conn.rollback()
     finally:
         cursor.close()
@@ -71,11 +71,11 @@ def check_db():
             conn.close()
             
             return jsonify({
-                "message": "db trouvé",
+                "message": "db trouve",
                 "details": f"Table USERS existe avec {users_count} utilisateurs"
             }), 200
         else:
-            return jsonify({"message": "db non trouvée"}), 404
+            return jsonify({"message": "db non trouvee"}), 404
     except Exception as e:
         return jsonify({"message": f"Erreur: {str(e)}"}), 500
 
@@ -89,7 +89,7 @@ def create_user():
         required_fields = ['nom', 'prenom', 'email', 'password']
         if not all(key in data for key in required_fields):
             return jsonify({
-                "message": "Données manquantes",
+                "message": "Donnees manquantes",
                 "required_fields": required_fields
             }), 400
 
@@ -106,10 +106,10 @@ def create_user():
         cursor.close()
         conn.close()
         
-        return jsonify({"message": "Utilisateur créé avec succès"}), 200
+        return jsonify({"message": "Utilisateur cree avec succes"}), 200
         
     except sqlite3.IntegrityError:
-        return jsonify({"message": "Email déjà utilisé"}), 409
+        return jsonify({"message": "Email dejà utilise"}), 409
     except Exception as e:
         return jsonify({"message": f"Erreur: {str(e)}"}), 500
 
@@ -192,7 +192,7 @@ def get_user():
             """, (data['username'].split()[0], data['username'].split()[1], data['password']))
         else:
             return jsonify({
-                "message": "Données manquantes",
+                "message": "Donnees manquantes",
                 "details": "Fournir soit uid, soit email et password, soit username et password"
             }), 400
             
@@ -210,7 +210,7 @@ def get_user():
                 }
             }), 200
         else:
-            return jsonify({"message": "Utilisateur non trouvé"}), 404
+            return jsonify({"message": "Utilisateur non trouve"}), 404
             
     except Exception as e:
         return jsonify({"message": f"Erreur: {str(e)}"}), 500
