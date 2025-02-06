@@ -80,6 +80,39 @@ def check_db():
         return jsonify({"message": f"Erreur: {str(e)}"}), 500
 
 
+#@app.route('/create_user', methods=['POST'])
+#def create_user():
+#    try:
+#        data = request.get_json()
+#        
+#        # Vérifie si toutes les données requises sont présentes
+#        required_fields = ['nom', 'prenom', 'email', 'password']
+#        if not all(key in data for key in required_fields):
+#            return jsonify({
+#                "message": "Donnees manquantes",
+#                "required_fields": required_fields
+#            }), 400
+#
+#        conn = sqlite3.connect('data/users.db')
+#        cursor = conn.cursor()
+#        
+#        # Insertion du nouvel utilisateur
+#        cursor.execute("""
+#            INSERT INTO USERS (nom, prenom, email, password) 
+#            VALUES (?, ?, ?, ?)
+#        """, (data['nom'], data['prenom'], data['email'], data['password']))
+#        
+#        conn.commit()
+#        cursor.close()
+#        conn.close()
+#        
+#        return jsonify({"message": "Utilisateur cree avec succes"}), 200
+#        
+#    except sqlite3.IntegrityError:
+#        return jsonify({"message": "Email dejà utilise"}), 409
+#    except Exception as e:
+#        return jsonify({"message": f"Erreur: {str(e)}"}), 500
+#
 @app.route('/create_user', methods=['POST'])
 def create_user():
     try:
@@ -93,25 +126,23 @@ def create_user():
                 "required_fields": required_fields
             }), 400
 
-        conn = sqlite3.connect('data/users.db')
-        cursor = conn.cursor()
-        
-        # Insertion du nouvel utilisateur
-        cursor.execute("""
-            INSERT INTO USERS (nom, prenom, email, password) 
-            VALUES (?, ?, ?, ?)
-        """, (data['nom'], data['prenom'], data['email'], data['password']))
-        
-        conn.commit()
-        cursor.close()
-        conn.close()
-        
+        # Utilisation d'un timeout plus long et d'un gestionnaire de contexte
+        with sqlite3.connect('data/users.db', timeout=10) as conn:
+            conn.execute("PRAGMA busy_timeout = 5000")
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO USERS (nom, prenom, email, password) 
+                VALUES (?, ?, ?, ?)
+            """, (data['nom'], data['prenom'], data['email'], data['password']))
+            conn.commit()  # Avec le 'with', la fermeture est automatique
+
         return jsonify({"message": "Utilisateur cree avec succes"}), 200
         
     except sqlite3.IntegrityError:
-        return jsonify({"message": "Email dejà utilise"}), 409
+        return jsonify({"message": "Email deja utilise"}), 409
     except Exception as e:
         return jsonify({"message": f"Erreur: {str(e)}"}), 500
+
 
 
 #@app.route('/get_user', methods=['POST'])

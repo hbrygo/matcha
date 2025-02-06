@@ -3,9 +3,9 @@ import requests
 def test_create_user():
     url = 'http://localhost:8181/create_user'
     test_data = {
-        "nom": "Dupont",
-        "prenom": "Jean",
-        "email": "jean.dupont@example.com",
+        "nom": "Dupont2",
+        "prenom": "Jean2",
+        "email": "jean2.dupont@example.com",
         "password": "motdepasse123"
     }
 
