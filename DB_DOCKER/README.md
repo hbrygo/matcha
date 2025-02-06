@@ -85,6 +85,15 @@ Par email et password :
     "password": "string"   // Le mot de passe de l'utilisateur
 }
 
+Par username et password :
+{
+    "username": "string",  // Le nom complet (format: "nom prenom")
+    "password": "string"   // Le mot de passe de l'utilisateur
+}
+Note : Pour le username, il doit être fourni au format "nom prenom" (exemple : "Dupont Jean").
+
+
+
 Exemples de requêtes curl :
 
 Recherche par UID :
@@ -114,6 +123,7 @@ Réponses possibles :
     }
 }
 
+200 : Utilisateur trouvé (avec ses informations)
 400 : Données manquantes ou format incorrect
 404 : Utilisateur non trouvé
 500 : Erreur serveur

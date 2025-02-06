@@ -113,6 +113,54 @@ def create_user():
     except Exception as e:
         return jsonify({"message": f"Erreur: {str(e)}"}), 500
 
+
+#@app.route('/get_user', methods=['POST'])
+#def get_user():
+#    try:
+#        data = request.get_json()
+#        
+#        conn = sqlite3.connect('data/users.db')
+#        cursor = conn.cursor()
+#        
+#        if 'uid' in data:
+#            # Recherche par UID
+#            cursor.execute("""
+#                SELECT uid, nom, prenom, email 
+#                FROM USERS 
+#                WHERE uid = ?
+#            """, (data['uid'],))
+#        elif 'email' in data and 'password' in data:
+#            # Recherche par email et password
+#            cursor.execute("""
+#                SELECT uid, nom, prenom, email 
+#                FROM USERS 
+#                WHERE email = ? AND password = ?
+#            """, (data['email'], data['password']))
+#        else:
+#            return jsonify({
+#                "message": "Données manquantes",
+#                "details": "Fournir soit uid, soit email et password"
+#            }), 400
+#            
+#        user = cursor.fetchone()
+#        cursor.close()
+#        conn.close()
+#        
+#        if user:
+#            return jsonify({
+#                "user": {
+#                    "uid": user[0],
+#                    "nom": user[1],
+#                    "prenom": user[2],
+#                    "email": user[3]
+#                }
+#            }), 200
+#        else:
+#            return jsonify({"message": "Utilisateur non trouvé"}), 404
+#            
+#    except Exception as e:
+#        return jsonify({"message": f"Erreur: {str(e)}"}), 500
+
 @app.route('/get_user', methods=['POST'])
 def get_user():
     try:
@@ -135,10 +183,17 @@ def get_user():
                 FROM USERS 
                 WHERE email = ? AND password = ?
             """, (data['email'], data['password']))
+        elif 'username' in data and 'password' in data:
+            # Recherche par nom d'utilisateur (combinaison nom et prénom) et password
+            cursor.execute("""
+                SELECT uid, nom, prenom, email 
+                FROM USERS 
+                WHERE nom = ? AND prenom = ? AND password = ?
+            """, (data['username'].split()[0], data['username'].split()[1], data['password']))
         else:
             return jsonify({
                 "message": "Données manquantes",
-                "details": "Fournir soit uid, soit email et password"
+                "details": "Fournir soit uid, soit email et password, soit username et password"
             }), 400
             
         user = cursor.fetchone()
