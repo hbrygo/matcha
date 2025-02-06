@@ -10,8 +10,9 @@
 </head>
 
 <body class="bg-gray-100">
+    <h1 class="text-2xl font-bold text-center mt-4">Registration Form</h1>
     <div class="container mx-auto p-4">
-        <form hx-post="/submit" class="bg-white p-6 rounded-lg shadow-md max-w-lg mx-auto">
+        <form class="bg-white p-6 rounded-lg shadow-md max-w-lg mx-auto">
             <!-- Personal Information -->
             <div>
                 <label class="block text-sm font-medium">Date of Birth</label>
@@ -125,7 +126,8 @@
                 promotional emails
             </div>
 
-            <button type="submit" class="w-full bg-pink-600 text-white py-2 rounded-md hover:bg-pink-700">
+            <button type="submit" onclick="validate()"
+                class="w-full bg-pink-600 text-white py-2 rounded-md hover:bg-pink-700">
                 Validate
             </button>
         </form>
@@ -135,3 +137,39 @@
 </body>
 
 </html>
+
+<script>
+    function validate() {
+        const form = document.getElementById('registrationForm');
+        const formData = new FormData(form);
+        const jsonData = {};
+        let isValid = true;
+
+        // Convert FormData to JSON mais ignore checkboxes et le boutton de soumission
+        for (const [key, value] of formData.entries()) {
+            if (value !== 'on' && key !== 'submit') {
+                jsonData[key] = value;
+            }
+            if (value === 'off' && key === 'terms') {
+                isValid = false;
+            }
+        }
+
+        if (!isValid) {
+            document.getElementById('response').innerText = 'Please accept the Terms and Conditions';
+            return;
+        }
+        fetch('/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response').innerText = JSON.stringify(data);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
