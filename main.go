@@ -11,7 +11,13 @@ import (
 )
 
 func sendIndex(w http.ResponseWriter, r *http.Request) {
-	file, err := os.Open("template/index.html")
+	pageName := "template/" + r.URL.Path[1:] + ".html"
+
+	if r.URL.Path == "/" {
+		pageName = "template/index.html"
+	}
+
+	file, err := os.Open(pageName)
 	if err != nil {
 		http.Error(w, "Fichier introuvable", 404)
 		return
@@ -27,6 +33,21 @@ func sendIndex(w http.ResponseWriter, r *http.Request) {
 
 func sendRegister(w http.ResponseWriter, r *http.Request) {
 	file, err := os.Open("template/register.html")
+	if err != nil {
+		http.Error(w, "Fichier introuvable", 404)
+		return
+	}
+	defer file.Close()
+	fileInfo, err := file.Stat()
+	if err != nil {
+		http.Error(w, "Fichier introuvable", 404)
+		return
+	}
+	http.ServeContent(w, r, file.Name(), fileInfo.ModTime(), file)
+}
+
+func sendFirstStep(w http.ResponseWriter, r *http.Request) {
+	file, err := os.Open("template/firstStep.html")
 	if err != nil {
 		http.Error(w, "Fichier introuvable", 404)
 		return
@@ -72,38 +93,37 @@ func checkRegister(w http.ResponseWriter, r *http.Request) {
 	// Process registration logic here...
 
 	postBody, _ := json.Marshal(map[string]string{
-        "nom": req.Username,        // Le nom de famille de l'utilisateur
-		"prenom": req.Username,     // Le prénom de l'utilisateur
-		"email": req.Email,      // L'email unique de l'utilisateur
-		"password": req.Password,    // Le mot de passe de l'utilisateur
-    })
-    responseBody := bytes.NewBuffer(postBody)
-    // Leverage Go's HTTP Post function to make request
-    resp, err := http.Post("http://localhost:8181/create_user", "application/json", responseBody)
-    // Handle Error
-    if err != nil {
-        log.Fatalf("An Error Occured %v", err)
-    }
-    defer resp.Body.Close()
-    // Read the response body
+		"nom":      req.Username, // Le nom de famille de l'utilisateur
+		"prenom":   req.Username, // Le prénom de l'utilisateur
+		"email":    req.Email,    // L'email unique de l'utilisateur
+		"password": req.Password, // Le mot de passe de l'utilisateur
+	})
+	responseBody := bytes.NewBuffer(postBody)
+	// Leverage Go's HTTP Post function to make request
+	resp, err := http.Post("http://localhost:8181/create_user", "application/json", responseBody)
+	// Handle Error
+	if err != nil {
+		log.Fatalf("An Error Occured %v", err)
+	}
+	defer resp.Body.Close()
+	// Read the response body
 
-    responseData, err := io.ReadAll(resp.Body)
-    if err != nil {
-        log.Fatalf("An Error Occured %v", err)
-    }
+	responseData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalf("An Error Occured %v", err)
+	}
 
-    fmt.Printf("Response: %s\n", responseData)
-
+	fmt.Printf("Response: %s\n", responseData)
 
 	// if (/*all good*/) {
 	response := map[string]interface{}{}
 
-	if (resp.StatusCode == 200) {
+	if resp.StatusCode == 200 {
 		response = map[string]interface{}{
 			"success": true,
 			"message": "Registration successful",
 			"user":    req, // Example user data
-		} 
+		}
 	} else {
 		response = map[string]interface{}{
 			"success": false,
@@ -128,48 +148,48 @@ func checkLogin(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Printf("Email: %s\n", req.Email)
 	fmt.Printf("Password: %s\n", req.Password)
-    // Check dans la db si le login est correct
+	// Check dans la db si le login est correct
 
-    postBody, _ := json.Marshal(map[string]string{
-        "email":  req.Email,
-        "password": req.Password,
-    })
-    responseBody := bytes.NewBuffer(postBody)
-    // Leverage Go's HTTP Post function to make request
-    resp, err := http.Post("http://localhost:8181/get_user", "application/json", responseBody)
-    // Handle Error
-    if err != nil {
-        log.Fatalf("An Error Occured %v", err)
-    }
-    defer resp.Body.Close()
-    // Read the response body
+	postBody, _ := json.Marshal(map[string]string{
+		"email":    req.Email,
+		"password": req.Password,
+	})
+	responseBody := bytes.NewBuffer(postBody)
+	// Leverage Go's HTTP Post function to make request
+	resp, err := http.Post("http://localhost:8181/get_user", "application/json", responseBody)
+	// Handle Error
+	if err != nil {
+		log.Fatalf("An Error Occured %v", err)
+	}
+	defer resp.Body.Close()
+	// Read the response body
 
-    responseData, err := io.ReadAll(resp.Body)
-    if err != nil {
-        log.Fatalf("An Error Occured %v", err)
-    }
+	responseData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalf("An Error Occured %v", err)
+	}
 
-    fmt.Printf("Response: %s\n", responseData)
+	fmt.Printf("Response: %s\n", responseData)
 
 	var apiResponse map[string]interface{}
-    if err := json.Unmarshal(responseData, &apiResponse); err != nil {
-        log.Fatalf("An Error Occured %v", err)
-    }
+	if err := json.Unmarshal(responseData, &apiResponse); err != nil {
+		log.Fatalf("An Error Occured %v", err)
+	}
 
-    var response map[string]interface{}
-    if resp.StatusCode == 200 {
-        response = map[string]interface{}{
-            "success": true,
-            "message": "Login successful",
-        }
-    } else {
-        response = map[string]interface{}{
-                "success": false,
-                "message": apiResponse["message"],
-            }
-    }
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(response)
+	var response map[string]interface{}
+	if resp.StatusCode == 200 {
+		response = map[string]interface{}{
+			"success": true,
+			"message": "Login successful",
+		}
+	} else {
+		response = map[string]interface{}{
+			"success": false,
+			"message": apiResponse["message"],
+		}
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 	fmt.Printf("____________________________________________________")
 	fmt.Printf("Check login end\n")
 }
@@ -178,6 +198,7 @@ func main() {
 	http.HandleFunc("/", sendIndex)
 	http.HandleFunc("/register", sendRegister)
 	http.HandleFunc("/login", sendLogin)
+	http.HandleFunc("/firstStep", sendFirstStep)
 	http.HandleFunc("POST /checkRegister", checkRegister)
 	http.HandleFunc("POST /checkLogin", checkLogin)
 	fmt.Println("Serveur démarré sur : http://localhost:8080")
