@@ -71,6 +71,8 @@
                     localStorage.setItem('user', JSON.stringify(data.user));
                     loadPage('Home');
                 } else {
+                    // ajouter un affichage pour prevenir que les infos sont incorrectes
+                    alert(data.message);
                     // showError(data.message);
                 }
             });

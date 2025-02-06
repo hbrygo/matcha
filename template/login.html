@@ -66,6 +66,8 @@
                     localStorage.setItem('user', JSON.stringify(data.user));
                     loadPage('Home');
                 } else {
+                    // ajouter un affichage pour prevenir que les informations ne sont pas valide
+                    alert(data.message);
                     // document.getElementById('response').innerHTML = data.message;
                 }
             });
