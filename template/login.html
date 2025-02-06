@@ -64,7 +64,7 @@
                 if (data.success) {
                     console.log(data);
                     localStorage.setItem('user', JSON.stringify(data.user));
-                    loadPage('Home');
+                    loadPage('index');
                 } else {
                     // ajouter un affichage pour prevenir que les informations ne sont pas valide
                     alert(data.message);

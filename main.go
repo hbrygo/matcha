@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-func sendIndex(w http.ResponseWriter, r *http.Request) {
+func sendPage(w http.ResponseWriter, r *http.Request) {
 	pageName := "template/" + r.URL.Path[1:] + ".html"
 
 	if r.URL.Path == "/" {
@@ -18,51 +18,6 @@ func sendIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file, err := os.Open(pageName)
-	if err != nil {
-		http.Error(w, "Fichier introuvable", 404)
-		return
-	}
-	defer file.Close()
-	fileInfo, err := file.Stat()
-	if err != nil {
-		http.Error(w, "Fichier introuvable", 404)
-		return
-	}
-	http.ServeContent(w, r, file.Name(), fileInfo.ModTime(), file)
-}
-
-func sendRegister(w http.ResponseWriter, r *http.Request) {
-	file, err := os.Open("template/register.html")
-	if err != nil {
-		http.Error(w, "Fichier introuvable", 404)
-		return
-	}
-	defer file.Close()
-	fileInfo, err := file.Stat()
-	if err != nil {
-		http.Error(w, "Fichier introuvable", 404)
-		return
-	}
-	http.ServeContent(w, r, file.Name(), fileInfo.ModTime(), file)
-}
-
-func sendFirstStep(w http.ResponseWriter, r *http.Request) {
-	file, err := os.Open("template/firstStep.html")
-	if err != nil {
-		http.Error(w, "Fichier introuvable", 404)
-		return
-	}
-	defer file.Close()
-	fileInfo, err := file.Stat()
-	if err != nil {
-		http.Error(w, "Fichier introuvable", 404)
-		return
-	}
-	http.ServeContent(w, r, file.Name(), fileInfo.ModTime(), file)
-}
-
-func sendLogin(w http.ResponseWriter, r *http.Request) {
-	file, err := os.Open("template/login.html")
 	if err != nil {
 		http.Error(w, "Fichier introuvable", 404)
 		return
@@ -195,10 +150,7 @@ func checkLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", sendIndex)
-	http.HandleFunc("/register", sendRegister)
-	http.HandleFunc("/login", sendLogin)
-	http.HandleFunc("/firstStep", sendFirstStep)
+	http.HandleFunc("/", sendPage)
 	http.HandleFunc("POST /checkRegister", checkRegister)
 	http.HandleFunc("POST /checkLogin", checkLogin)
 	fmt.Println("Serveur démarré sur : http://localhost:8080")
