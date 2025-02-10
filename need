@@ -133,6 +133,7 @@ curl -X POST http://localhost:8181/login \
 {
     "user": {
         "uid": 1,
+        "firstStep": 1
     }
 }
 
@@ -145,6 +146,7 @@ curl -X POST http://localhost:8181/login \
 Vous devez fournir Email/Mdp ou Username/Mdp
 Les champs fournis ne doivent pas être vides
 Utilisez de préférence une connexion sécurisée (HTTPS) pour transmettre les données d'authentification
+Il faut renvoyer firstStep
 
 #########################################################################################
 Pour récupérer mes informations via l'API, voici les spécifications :
@@ -231,3 +233,18 @@ Les informations sensibles (mot de passe) ne sont pas incluses dans la réponse
 Les champs fournis ne doivent pas être vides
 Utilisez de préférence une connexion sécurisée (HTTPS) pour transmettre les données d'authentification
 Renvoie absolument toute les infos sauf Mdp et donnees sensible
+
+
+
+
+
+
+
+
+
+
+
+a definir:
+
+Comment verifier si les terms ont bien ete signe et que faire en fonction de la reponse
+Comment savoir si l'inscription est bien finis et que fair en fonction de la reponse

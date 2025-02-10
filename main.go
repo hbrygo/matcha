@@ -10,6 +10,15 @@ import (
 	"os"
 )
 
+type UserResponse struct {
+	User struct {
+		Email  string `json:"email"`
+		Nom    string `json:"nom"`
+		Prenom string `json:"prenom"`
+		UID    int    `json:"uid"`
+	} `json:"user"`
+}
+
 func sendPage(w http.ResponseWriter, r *http.Request) {
 	pageName := "template/" + r.URL.Path[1:] + ".html"
 
@@ -101,8 +110,8 @@ func checkLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("Email: %s\n", req.Email)
-	fmt.Printf("Password: %s\n", req.Password)
+	// fmt.Printf("Email: %s\n", req)
+	// fmt.Printf("Password: %s\n", req.Password)
 	// Check dans la db si le login est correct
 
 	postBody, _ := json.Marshal(map[string]string{
@@ -125,6 +134,17 @@ func checkLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Printf("Response: %s\n", responseData)
+
+	var userResp UserResponse
+	if err := json.Unmarshal(responseData, &userResp); err != nil {
+		log.Fatalf("Error parsing JSON: %v", err)
+	}
+
+	uid := userResp.User.UID
+	fmt.Printf("Extracted UID: %d\n", uid)
+
+	// Créer un cookie sécurisé
+	setCookie(w, fmt.Sprintf("%d", uid), "uid")
 
 	var apiResponse map[string]interface{}
 	if err := json.Unmarshal(responseData, &apiResponse); err != nil {
@@ -187,6 +207,7 @@ func updateData(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("req: %v\n", req)
 
 	// Process registration logic here...
+	// ajouter les cookies de fin firstStep si besoin
 
 	// postBody, _ := json.Marshal(map[string]string{
 	// 	"nom":      req.Username, // Le nom de famille de l'utilisateur
@@ -230,8 +251,35 @@ func updateData(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+func setCookie(w http.ResponseWriter, value string, name string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     name,
+		Value:    value,
+		Path:     "/",
+		HttpOnly: true, // Empêche l'accès via JS
+		Secure:   true, // Seulement HTTPS
+		SameSite: http.SameSiteStrictMode,
+	})
+}
+
+func getCookie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	// Récupérer le cookie
+	uidCookie, err := r.Cookie("uid")
+	if err != nil {
+		http.Error(w, `{"error":"No cookie found"}`, http.StatusUnauthorized)
+		return
+	}
+
+	// Réponse JSON correcte
+	response := map[string]string{"uid": uidCookie.Value}
+	json.NewEncoder(w).Encode(response)
+}
+
 func main() {
 	http.HandleFunc("/", sendPage)
+	http.HandleFunc("GET /getCookie", getCookie)
 	http.HandleFunc("POST /checkRegister", checkRegister)
 	http.HandleFunc("POST /checkLogin", checkLogin)
 	http.HandleFunc("POST /updateData", updateData)
