@@ -152,20 +152,21 @@ func checkLogin(w http.ResponseWriter, r *http.Request) {
 func updateData(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Update data start\n")
 	var req struct {
-		Birth_date          string `json:"birthdate"`
-		Gender              string `json:"gender"`
-		Preferred_gender    string `json:"preferred_gender"`
-		Sexual_orientation  string `json:"sexual_orientation"`
-		Relationship_status string `json:"relationship_status"`
-		Physical_appearance string `json:"physical_appearance"`
-		Size                string `json:"size"`
-		Weight              string `json:"weight"`
-		Hobbies             string `json:"hobbies"`
-		Location            string `json:"location"`
-		Search_distance     string `json:"search_distance"`
-		Age_range           string `json:"age_range"`
-		Bio                 string `json:"bio"`
-		Notifications       string `json:"notifications"`
+		Birth_date          string   `json:"birthdate"`
+		Gender              string   `json:"gender"`
+		Preferred_gender    []string `json:"preferred_gender"`
+		Sexual_orientation  string   `json:"sexual_orientation"`
+		Relationship_status string   `json:"relationship_status"`
+		Physical_appearance string   `json:"physical_appearance"`
+		Size                string   `json:"size"`
+		Weight              string   `json:"weight"`
+		Hobbies             string   `json:"hobbies"`
+		Location            string   `json:"location"`
+		Search_distance     string   `json:"search_distance"`
+		Age_range           string   `json:"age_range"`
+		Bio                 string   `json:"bio"`
+		Notifications       string   `json:"notifications"`
+		Terms               string   `json:"terms"`
 	}
 
 	body, err := io.ReadAll(r.Body)
@@ -182,6 +183,8 @@ func updateData(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	fmt.Printf("req: %v\n", req)
 
 	// Process registration logic here...
 
