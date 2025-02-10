@@ -164,7 +164,6 @@ func updateData(w http.ResponseWriter, r *http.Request) {
 		Location            string `json:"location"`
 		Search_distance     string `json:"search_distance"`
 		Age_range           string `json:"age_range"`
-		Profile_photos      string `json:"profile_photos"`
 		Bio                 string `json:"bio"`
 		Notifications       string `json:"notifications"`
 	}

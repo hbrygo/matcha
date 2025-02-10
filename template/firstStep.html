@@ -12,8 +12,16 @@
 <body class="bg-gray-100">
     <h1 class="text-2xl font-bold text-center mt-4">Registration Form</h1>
     <div class="container mx-auto p-4">
-        <form class="bg-white p-6 rounded-lg shadow-md max-w-lg mx-auto">
+        <form id="registrationForm" class="bg-white p-6 rounded-lg shadow-md max-w-lg mx-auto">
             <!-- Personal Information -->
+            <div>
+                <label class="block text-sm font-medium">First Name</label>
+                <input type="text" name="first_name" required class="w-full px-3 py-2 border rounded-md">
+            </div>
+            <div>
+                <label class="block text-sm font-medium">Last Name</label>
+                <input type="text" name="last_name" required class="w-full px-3 py-2 border rounded-md">
+            </div>
             <div>
                 <label class="block text-sm font-medium">Date of Birth</label>
                 <input type="date" name="birthdate" required class="w-full px-3 py-2 border rounded-md">
@@ -28,25 +36,25 @@
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium">Preferred Gender(s)</label>
-                <select name="preferred_gender" required class="w-full px-3 py-2 border rounded-md">
-                    <option value="">-- Choose --</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="non-binary">Non-binary</option>
-                    <option value="all">All</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium">Sexual Orientation</label>
-                <select name="sexual_orientation" required class="w-full px-3 py-2 border rounded-md">
-                    <option value="">-- Choose --</option>
-                    <option value="heterosexual">Heterosexual</option>
-                    <option value="homosexual">Homosexual</option>
-                    <option value="bisexual">Bisexual</option>
-                    <option value="pansexual">Pansexual</option>
-                    <option value="asexual">Asexual</option>
-                </select>
+                <label class="block text-sm font-medium">Looking For</label>
+                <div class="flex flex-col">
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="preferred_gender" value="male" class="form-checkbox">
+                        <span class="ml-2">Male</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="preferred_gender" value="female" class="form-checkbox">
+                        <span class="ml-2">Female</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="preferred_gender" value="non-binary" class="form-checkbox">
+                        <span class="ml-2">Non-binary</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="preferred_gender" value="all" class="form-checkbox">
+                        <span class="ml-2">All</span>
+                    </label>
+                </div>
             </div>
             <div>
                 <label class="block text-sm font-medium">Relationship Status</label>
@@ -107,23 +115,19 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium">Profile Photo(s)</label>
-                <input type="file" name="profile_photos" required class="w-full px-3 py-2 border rounded-md">
-            </div>
-            <div>
                 <label class="block text-sm font-medium">Bio</label>
                 <textarea name="bio" required class="w-full px-3 py-2 border rounded-md"></textarea>
             </div>
             <!-- Terms and Validation -->
             <div>
-                <label class="block text-sm font-medium">Accept Terms and Conditions</label>
-                <input type="checkbox" name="terms" required class="mr-2"> I accept the Terms and Conditions and Privacy
-                Policy
-            </div>
-            <div>
                 <label class="block text-sm font-medium">Consent to Notifications and Promotional Emails</label>
                 <input type="checkbox" name="notifications" class="mr-2"> I consent to receive notifications and
                 promotional emails
+            </div>
+            <div>
+                <label class="block text-sm font-medium">Accept Terms and Conditions</label>
+                <input type="checkbox" name="terms" required class="mr-2"> I accept the Terms and Conditions and Privacy
+                Policy
             </div>
 
             <button type="submit" onclick="validate()"
@@ -143,30 +147,37 @@
         const form = document.getElementById('registrationForm');
         const formData = new FormData(form);
         const jsonData = {};
-        let isValid = true;
 
-        // Convert FormData to JSON mais ignore checkboxes et le boutton de soumission
-        for (const [key, value] of formData.entries()) {
-            if (value !== 'on' && key !== 'submit') {
+        console.log(formData);
+        formData.forEach((value, key) => {
+            // console.log(key);
+            if (jsonData[key]) {
+                if (Array.isArray(jsonData[key])) {
+                    jsonData[key].push(value);
+                } else {
+                    jsonData[key] = [jsonData[key], value];
+                }
+            } else {
                 jsonData[key] = value;
             }
-            if (value === 'off' && key === 'terms') {
-                isValid = false;
-            }
-        }
+        });
+        console.log('bonjour');
+        console.log(jsonData);
+        console.log('aurevoir');
 
-        if (!isValid) {
-            document.getElementById('response').innerText = 'Please accept the Terms and Conditions';
-            return;
-        }
-        fetch('/update', {
+        fetch('/updateData', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(jsonData)
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 document.getElementById('response').innerText = JSON.stringify(data);
             })

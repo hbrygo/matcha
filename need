@@ -1,0 +1,233 @@
+############################################################################
+Pour créer un nouvel utilisateur via l'API, voici les spécifications :
+############################################################################
+
+Endpoint : POST http://localhost:8181/create_user
+
+Format des données (JSON) :
+{
+    "username": "string"
+    "email": "string",      // L'email unique de l'utilisateur
+    "password": "string"    // Le mot de passe de l'utilisateur
+}
+
+Exemple de requête curl :
+curl -X POST http://localhost:8181/create_user \
+     -H "Content-Type: application/json" \
+     -d '{
+           "username": "jdupont"
+           "email": "jean.dupont@example.com",
+           "password": "motdepasse123"
+         }'
+
+Réponses possibles :
+
+200 : Utilisateur créé avec succès
+400 : Données manquantes
+409 : Email déjà utilisé
+410 : Username deja utilise
+411 : Email et Usename deja utilise
+500 : Erreur serveur
+⚠️ Notes importantes :
+
+Tous les champs sont obligatoires (username, email, password)
+L'email doit être unique dans la base de données
+Le username doit être unique dans la base de données
+Les champs ne doivent pas être vides
+Le mot de passe doit être sécurisé :
+Évitez les mots de passe trop simples
+Préférez une combinaison de lettres, chiffres et caractères spéciaux
+Longueur minimale recommandée : 8 caractères
+Exemple de données valides :
+{
+    "username": "jdupont"
+    "email": "jean.dupont@example.com",
+    "password": "MonMotDePasse123!"
+}
+
+
+
+#########################################################################################
+Pour récupérer les informations d'un utilisateur via l'API, voici les spécifications :
+#########################################################################################
+
+Endpoint : POST http://localhost:8181/get_user
+
+Par UID :
+{
+    "uid": integer    // L'identifiant unique de l'utilisateur
+}
+
+
+Exemples de requêtes curl :
+
+Recherche par UID :
+curl -X POST http://localhost:8181/get_user \
+     -H "Content-Type: application/json" \
+     -d '{
+           "uid": 1
+         }'
+
+200 : Utilisateur trouvé, avec les données suivantes :
+{
+    "user": {
+        "nom": "Test",
+        "prenom": "User",
+        <!-- toutes les infos rentre precedement (orientation, sexe, age, ...) -->
+    }
+}
+
+200 : Utilisateur trouvé (avec ses informations)
+400 : Données manquantes ou format incorrect
+404 : Utilisateur non trouvé -> a definir peut etre 401
+500 : Erreur serveur
+⚠️ Notes importantes :
+
+Vous devez fournir l'uid
+Les informations sensibles (mot de passe) ne sont pas incluses dans la réponse
+Les champs fournis ne doivent pas être vides
+Utilisez de préférence une connexion sécurisée (HTTPS) pour transmettre les données d'authentification
+Renvoie toutes les infos dont j'ai besoin pour presenter le profile a une autre personne
+
+
+#########################################################################################
+Pour connecter un utilisateur via l'API, voici les spécifications :
+#########################################################################################
+
+Endpoint : POST http://localhost:8181/login
+
+Deux méthodes possibles pour récupérer les informations :
+
+Par Email/Mdp :
+{
+    "Email":        "string"
+    "Mot de passe": "string"
+}
+
+Par Username/Mdp :
+{
+    "Username":     "string"
+    "Mot de passe": "string"
+}
+
+
+Exemples de requêtes curl :
+
+Recherche par Email/Mdp :
+curl -X POST http://localhost:8181/login \
+     -H "Content-Type: application/json" \
+     -d '{
+            "Email":        "test@exemple.com",
+            "Mot de passe": "test"
+         }'
+
+Recherche par Username/Mdp :
+curl -X POST http://localhost:8181/login \
+     -H "Content-Type: application/json" \
+     -d '{
+            "Username": "jdupont",
+            "Mot de passe": "test"
+         }'
+
+200 : Utilisateur trouvé, avec les données suivantes :
+{
+    "user": {
+        "uid": 1,
+    }
+}
+
+200 : Utilisateur trouvé (avec ses informations)
+400 : Données manquantes ou format incorrect
+404 : Utilisateur non trouvé -> a definir peut etre 401
+500 : Erreur serveur
+⚠️ Notes importantes :
+
+Vous devez fournir Email/Mdp ou Username/Mdp
+Les champs fournis ne doivent pas être vides
+Utilisez de préférence une connexion sécurisée (HTTPS) pour transmettre les données d'authentification
+
+#########################################################################################
+Pour récupérer mes informations via l'API, voici les spécifications :
+#########################################################################################
+
+Endpoint : POST http://localhost:8181/me
+
+Par UID :
+{
+    "uid": integer    // L'identifiant unique de l'utilisateur
+}
+
+
+Exemples de requêtes curl :
+
+Recherche par UID :
+curl -X POST http://localhost:8181/me \
+     -H "Content-Type: application/json" \
+     -d '{
+           "uid": 1
+         }'
+
+200 : Utilisateur trouvé, avec les données suivantes :
+{
+    "user": {
+        "nom": "Test",
+        "prenom": "User",
+        "email": "test@exemple.com"
+        <!-- toutes les infos rentre precedement (orientation, sexe, age, ...) -->
+    }
+}
+
+200 : Utilisateur trouvé (avec ses informations)
+400 : Données manquantes ou format incorrect
+404 : Utilisateur non trouvé -> a definir peut etre 401
+500 : Erreur serveur
+⚠️ Notes importantes :
+
+Vous devez fournir l'uid
+Les informations sensibles (mot de passe) ne sont pas incluses dans la réponse
+Les champs fournis ne doivent pas être vides
+Utilisez de préférence une connexion sécurisée (HTTPS) pour transmettre les données d'authentification
+Renvoie absolument toute les infos sauf Mdp et donnees sensible
+
+#########################################################################################
+Pour modifier mes informations via l'API, voici les spécifications :
+#########################################################################################
+
+Endpoint : POST http://localhost:8181/update
+
+Par UID :
+{
+    "uid": integer    // L'identifiant unique de l'utilisateur
+}
+
+
+Exemples de requêtes curl :
+
+Recherche par UID :
+curl -X POST http://localhost:8181/me \
+     -H "Content-Type: application/json" \
+     -d '{
+           "uid": 1
+         }'
+
+200 : Utilisateur trouvé, avec les données suivantes :
+{
+    "user": {
+        "nom": "Test",
+        "prenom": "User",
+        "email": "test@exemple.com"
+        <!-- toutes les infos rentre precedement (orientation, sexe, age, ...) -->
+    }
+}
+
+200 : Utilisateur trouvé (avec ses informations)
+400 : Données manquantes ou format incorrect
+404 : Utilisateur non trouvé -> a definir peut etre 401
+500 : Erreur serveur
+⚠️ Notes importantes :
+
+Vous devez fournir l'uid
+Les informations sensibles (mot de passe) ne sont pas incluses dans la réponse
+Les champs fournis ne doivent pas être vides
+Utilisez de préférence une connexion sécurisée (HTTPS) pour transmettre les données d'authentification
+Renvoie absolument toute les infos sauf Mdp et donnees sensible
