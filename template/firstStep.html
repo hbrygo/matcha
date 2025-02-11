@@ -4,177 +4,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Form</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-    <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+    <title>Sign Up</title>
 </head>
 
-<body class="bg-gray-100">
-    <h1 class="text-2xl font-bold text-center mt-4">Registration Form</h1>
-    <div class="container mx-auto p-4">
-        <form id="registrationForm" class="bg-white p-6 rounded-lg shadow-md max-w-lg mx-auto">
-            <!-- Personal Information -->
-            <div>
-                <label class="block text-sm font-medium">First Name</label>
-                <input type="text" name="first_name" required class="w-full px-3 py-2 border rounded-md">
-            </div>
-            <div>
-                <label class="block text-sm font-medium">Last Name</label>
-                <input type="text" name="last_name" required class="w-full px-3 py-2 border rounded-md">
-            </div>
-            <div>
-                <label class="block text-sm font-medium">Date of Birth</label>
-                <input type="date" name="birthdate" required class="w-full px-3 py-2 border rounded-md">
-            </div>
-            <div>
-                <label class="block text-sm font-medium">Gender</label>
-                <select name="gender" required class="w-full px-3 py-2 border rounded-md">
-                    <option value="">-- Choose --</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="non-binary">Non-binary</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium">Looking For</label>
-                <div class="flex flex-col">
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="preferred_gender" value="male" class="form-checkbox">
-                        <span class="ml-2">Male</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="preferred_gender" value="female" class="form-checkbox">
-                        <span class="ml-2">Female</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="preferred_gender" value="non-binary" class="form-checkbox">
-                        <span class="ml-2">Non-binary</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="preferred_gender" value="all" class="form-checkbox">
-                        <span class="ml-2">All</span>
-                    </label>
-                </div>
-            </div>
-            <div>
-                <label class="block text-sm font-medium">Relationship Status</label>
-                <select name="relationship_status" required class="w-full px-3 py-2 border rounded-md">
-                    <option value="">-- Choose --</option>
-                    <option value="single">Single</option>
-                    <option value="open relationship">Open Relationship</option>
-                </select>
-            </div>
+<body>
+    <div class="container">
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div id="progress" class="progress"></div>
+        </div>
 
-            <!-- Profile and Appearance -->
-            <div>
-                <label class="block text-sm font-medium">Physical Appearance</label>
-                <select name="physical_appearance" required class="w-full px-3 py-2 border rounded-md">
-                    <option value="">-- Choose --</option>
-                    <option value="thin">Thin</option>
-                    <option value="normal">Normal</option>
-                    <option value="fat">Fat</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium">Size</label>
-                <select name="size" required class="w-full px-3 py-2 border rounded-md">
-                    <option value="">-- Choose --</option>
-                    <option value="small">Small</option>
-                    <option value="normal">Normal</option>
-                    <option value="large">Large</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium">Weight</label>
-                <select name="weight" required class="w-full px-3 py-2 border rounded-md">
-                    <option value="">-- Choose --</option>
-                    <option value="small">Small</option>
-                    <option value="normal">Normal</option>
-                    <option value="large">Large</option>
-                </select>
-            </div>
-
-            <!-- Interests and Lifestyle -->
-            <div>
-                <label class="block text-sm font-medium">Hobbies and Passions</label>
-                <input type="text" name="hobbies" class="w-full px-3 py-2 border rounded-md">
-            </div>
-
-            <!-- Location and Search Preferences -->
-            <div>
-                <label class="block text-sm font-medium">City / Region</label>
-                <input type="text" name="location" required class="w-full px-3 py-2 border rounded-md">
-            </div>
-            <div>
-                <label class="block text-sm font-medium">Maximum Search Distance (Km)</label>
-                <input type="number" name="search_distance" required class="w-full px-3 py-2 border rounded-md">
-            </div>
-            <div>
-                <label class="block text-sm font-medium">Preferred Age Range</label>
-                <input type="text" name="age_range" required class="w-full px-3 py-2 border rounded-md">
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium">Bio</label>
-                <textarea name="bio" required class="w-full px-3 py-2 border rounded-md"></textarea>
-            </div>
-            <!-- Terms and Validation -->
-            <div>
-                <label class="block text-sm font-medium">Consent to Notifications and Promotional Emails</label>
-                <input type="checkbox" name="notifications" class="mr-2"> I consent to receive notifications and
-                promotional emails
-            </div>
-            <div>
-                <label class="block text-sm font-medium">Accept Terms and Conditions</label>
-                <input type="checkbox" name="terms" required class="mr-2"> I accept the Terms and Conditions and Privacy
-                Policy
-            </div>
-
-            <button type="submit" onclick="validate()"
-                class="w-full bg-pink-600 text-white py-2 rounded-md hover:bg-pink-700">
-                Validate
-            </button>
-        </form>
-
-        <div id="response" class="mt-4 text-center text-sm text-gray-600"></div>
+        <!-- Form Container -->
+        <div id="form-container"></div>
     </div>
 </body>
 
 </html>
 
-
 <script>
-    function validate() {
-        const form = document.getElementById('registrationForm');
-        const formData = new FormData(form);
-        const jsonData = {};
+    let formData = {
+        firstName: "",
+        lastName: "",
+        dob: "",
+        gender: "",
+        preference: "",
+        interests: [],
+        photos: [],
+        bio: ""
+    };
 
-        formData.forEach((value, key) => {
-            if (key === 'preferred_gender') {
-                if (!jsonData[key]) {
-                    jsonData[key] = [];
-                }
-                jsonData[key].push(value);
-            } else {
-                jsonData[key] = value;
-            }
-        });
+    const steps = [
+        {
+            id: 1, html: `
+        <h2>Your Name</h2>
+        <input type="text" id="first-name" placeholder="First Name" class="input-field" value="">
+        <input type="text" id="last-name" placeholder="Last Name" class="input-field" value="">
+        <div class="buttons">
+            <button onclick="saveData(1); nextStep(2)">Next</button>
+        </div>
+    `},
+        {
+            id: 2, html: `
+        <h2>Date of Birth</h2>
+        <input type="date" id="dob" class="input-field" value="">
+        <div class="buttons">
+            <button onclick="prevStep(1)">Back</button>
+            <button onclick="saveData(2); nextStep(3)">Next</button>
+        </div>
+    `},
+        {
+            id: 3, html: `
+        <h2>Gender</h2>
+        <select id="gender" class="input-field">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
+        <div class="buttons">
+            <button onclick="prevStep(2)">Back</button>
+            <button onclick="saveData(3); nextStep(4)">Next</button>
+        </div>
+    `},
+        {
+            id: 4, html: `
+        <h2>Sexual Preference</h2>
+        <select id="preference" class="input-field">
+            <option value="male">Men</option>
+            <option value="female">Women</option>
+            <option value="both">Both</option>
+        </select>
+        <div class="buttons">
+            <button onclick="prevStep(3)">Back</button>
+            <button onclick="saveData(4); nextStep(5)">Next</button>
+        </div>
+    `},
+        {
+            id: 5, html: `
+        <h2>Interests</h2>
+        <div class="interests" id="interests">
+            <button class="tag" id="Sports" onclick="toggleInterest(this, 'Sports')">Sports</button>
+            <button class="tag" id="Reading" onclick="toggleInterest(this, 'Reading')">Reading</button>
+            <button class="tag" id="Tattoo" onclick="toggleInterest(this, 'Tattoo')">Tattoo</button>
+            <button class="tag" id="Vegan" onclick="toggleInterest(this, 'Vegan')">Vegan</button>
+            <button class="tag" id="Gaming" onclick="toggleInterest(this, 'Gaming')">Gaming</button>
+            <button class="tag" id="Traveling" onclick="toggleInterest(this, 'Traveling')">Traveling</button>
+        </div>
+        <div class="buttons">
+            <button onclick="prevStep(4)">Back</button>
+            <button onclick="saveData(5); nextStep(6)">Next</button>
+        </div>
+    `},
+        {
+            id: 6, html: `
+        <h2>Upload Your Photos</h2>
 
-        if (!jsonData['notifications']) {
-            jsonData['notifications'] = 'off';
+        <!-- Photo de profil obligatoire -->
+        <div class="photo-grid">
+            <div class="photo-box profile" id="profile-box" onclick="selectImage('profile-box')"
+                ondrop="handleDrop(event, 'profile-box')" ondragover="allowDrop(event)">
+                <span class="placeholder">Profile Photo (Required)</span>
+            </div>
+        </div>
+
+        <!-- 4 autres photos optionnelles en carré -->
+        <div class="photo-grid-small">
+            <div class="photo-box" id="box1" onclick="selectImage('box1')" ondrop="handleDrop(event, 'box1')"
+                ondragover="allowDrop(event)">
+                <span class="placeholder">Drop or Click</span>
+            </div>
+            <div class="photo-box" id="box2" onclick="selectImage('box2')" ondrop="handleDrop(event, 'box2')"
+                ondragover="allowDrop(event)">
+                <span class="placeholder">Drop or Click</span>
+            </div>
+            <div class="photo-box" id="box3" onclick="selectImage('box3')" ondrop="handleDrop(event, 'box3')"
+                ondragover="allowDrop(event)">
+                <span class="placeholder">Drop or Click</span>
+            </div>
+            <div class="photo-box" id="box4" onclick="selectImage('box4')" ondrop="handleDrop(event, 'box4')"
+                ondragover="allowDrop(event)">
+                <span class="placeholder">Drop or Click</span>
+            </div>
+        </div>
+
+        <input type="file" id="fileInput" accept="image/*" hidden>
+        <div class="buttons">
+            <button onclick="prevStep(5)">Back</button>
+            <button onclick="saveData(6); nextStep(7)">Next</button>
+        </div>
+    `},
+        {
+            id: 7, html: `
+        <h2>Your Bio</h2>
+        <textarea id="bio" placeholder="Tell us about yourself..." class="input-field"></textarea>
+        <div class="buttons">
+            <button onclick="prevStep(6)">Back</button>
+            <button onclick="saveData(7); submitForm()">Submit</button>
+        </div>
+    `}
+    ];
+
+    let currentStep = 1;
+
+    function nextStep(step) {
+        if (step <= steps.length) {
+            loadStep(step);
+            updateProgress(step);
+            currentStep = step;
         }
-        if (!jsonData['terms']) {
-            jsonData['terms'] = 'off';
+    }
+
+    function prevStep(step) {
+        if (step >= 1) {
+            loadStep(step);
+            updateProgress(step);
+            currentStep = step;
         }
+    }
 
-        console.log(jsonData);
+    function updateProgress(step) {
+        const progress = document.getElementById("progress");
+        progress.style.width = `${(step / steps.length) * 100}%`;
+    }
 
+    function loadStep(step) {
+        document.getElementById("form-container").innerHTML = steps[step - 1].html;
+        restoreData(step);
+    }
+
+    function saveData(step) {
+        if (step === 1) {
+            formData.firstName = document.getElementById("first-name").value;
+            formData.lastName = document.getElementById("last-name").value;
+        } else if (step === 2) {
+            formData.dob = document.getElementById("dob").value;
+        } else if (step === 3) {
+            formData.gender = document.getElementById("gender").value;
+        } else if (step === 4) {
+            formData.preference = document.getElementById("preference").value;
+        } else if (step === 6) {
+            // formData.photos = [...document.getElementById("photos").files].map(f => f.name);
+        } else if (step === 7) {
+            formData.bio = document.getElementById("bio").value;
+        }
+    }
+
+    function restoreData(step) {
+        if (step === 1) {
+            document.getElementById("first-name").value = formData.firstName;
+            document.getElementById("last-name").value = formData.lastName;
+        } else if (step === 2) {
+            document.getElementById("dob").value = formData.dob;
+        } else if (step === 3) {
+            document.getElementById("gender").value = formData.gender;
+        } else if (step === 4) {
+            document.getElementById("preference").value = formData.preference;
+        } else if (step === 5) {
+            formData.interests.forEach(i => {
+                const button = document.getElementById(i);
+                button.classList.add("active");
+            });
+        } else if (step === 6) {
+            console.log(formData.photos);
+            // document.getElementById("photos").value = formData.photos;
+        } else if (step === 7) {
+            document.getElementById("bio").value = formData.bio;
+        }
+    }
+
+    function removeInterest(interest) {
+        console.log(formData.interests);
+        formData.interests = formData.interests.filter(i => i !== interest);
+        console.log(formData.interests);
+    }
+
+    function toggleInterest(button, interest) {
+        if (formData.interests.includes(interest)) {
+            // retirer l'interet de formData
+            removeInterest(interest);
+
+            // formData.interests = formData.interests.filter(i => i !== interest);
+            button.classList.remove("active");
+        } else {
+            formData.interests.push(interest);
+            button.classList.add("active");
+        }
+    }
+
+    function submitForm() {
+        console.log(formData);
         fetch('/updateData', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(jsonData)
+            body: JSON.stringify(formData)
         })
             .then(response => {
                 if (!response.ok) {
@@ -183,8 +246,304 @@
                 return response.json();
             })
             .then(data => {
-                document.getElementById('response').innerText = JSON.stringify(data);
+                console.log(data);
+                loadPage('home');
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function loadPage(page) {
+        window.location.href = `/${page}`;
+    }
+
+    function checkLogin() {
+        return fetch('/getCookie', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const cookiesObj = data.reduce((acc, cookie) => {
+                    acc[cookie.Name] = cookie.Value;
+                    return acc;
+                }, {});
+                console.log(cookiesObj);
+                if (!cookiesObj.uid) {
+                    loadPage('register');
+                } else if (cookiesObj.uid && !cookiesObj.firstStep) {
+                    nextStep(1);
+                } else {
+                    loadPage('index');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loadPage('register');
+                return {};
+            });
+    }
+
+    document.onload = checkLogin();
+    let fileInput = null;
+    function setFileInput() {
+        // if (fileInput == null && currentStep === 6) {
+        console.log("fileInput is null");
+        fileInput = document.getElementById("fileInput");
+        console.log(fileInput);
+        // }
+    }
+
+    function selectImage(boxId) {
+        console.log('ici');
+        currentBox = document.getElementById(boxId);
+
+        // Désactiver le clic si une image est déjà présente
+        if (currentBox.querySelector("img")) {
+            return; // Empêcher le clic si une image est présente
+        }
+
+        // console.log("fileInput", fileInput);
+        if (fileInput == null)
+            setFileInput();
+        fileInput.click();
+        console.log('value: ', fileInput);
+
+    }
+
+    fileInput.addEventListener("change", function (event) {
+        if (currentBox && event.target.files.length > 0) {
+            const file = event.target.files[0];
+            displayImage(file, currentBox);
+        }
+    });
+
+    function displayImage(file, box) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            box.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">
+                         <button class="remove-btn" onclick="removeImage('${box.id}')">&times;</button>`;
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    function removeImage(boxId) {
+        const box = document.getElementById(boxId);
+        box.innerHTML = `<span class="placeholder">Drop or Click</span>`;
+    }
+
+    /* Drag & Drop */
+    function allowDrop(event) {
+        event.preventDefault();
+        event.currentTarget.classList.add("drag-over");
+    }
+
+    function handleDrop(event, boxId) {
+        event.preventDefault();
+        event.currentTarget.classList.remove("drag-over");
+
+        const file = event.dataTransfer.files[0];
+        console.log(file);
+        if (file) {
+            displayImage(file, document.getElementById(boxId));
+        }
     }
 </script>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #f3f4f6;
+    }
+
+    .container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 350px;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background-color: #ddd;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .progress {
+        height: 100%;
+        background: #3498db;
+        width: 14%;
+        border-radius: 5px;
+        transition: width 0.3s ease-in-out;
+    }
+
+    h2 {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+
+    .input-field {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    .input-field:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        background-color: #3498db;
+        color: white;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background-color: #2980b9;
+    }
+
+    .submit {
+        background-color: #2ecc71;
+    }
+
+    .submit:hover {
+        background-color: #27ae60;
+    }
+
+    .interests {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .tag {
+        padding: 8px 12px;
+        background: #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .tag:hover {
+        background: #3498db;
+        color: white;
+    }
+
+    .active {
+        background: #3498db;
+        color: white;
+    }
+
+    .photo-grid {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+
+    .photo-grid-small {
+        display: flex;
+        /* grid-template-columns: repeat(2, 1fr); */
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .photo-box {
+        width: 100px;
+        height: 100px;
+        border: 2px dashed #aaa;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+        transition: border-color 0.3s ease-in-out;
+    }
+
+    .photo-box.profile {
+        width: 120px;
+        height: 120px;
+        border-color: #3498db;
+    }
+
+    /* Quand on fait glisser une image dessus */
+    .photo-box.drag-over {
+        border-color: #2ecc71;
+        background-color: rgba(46, 204, 113, 0.2);
+    }
+
+    .photo-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+    }
+
+    .placeholder {
+        font-size: 12px;
+        color: #777;
+        text-align: center;
+        padding: 5px;
+    }
+
+    .photo-box .remove-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: red;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .photo-box:hover .remove-btn {
+        display: flex;
+    }
+</style>

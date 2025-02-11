@@ -171,71 +171,28 @@ func checkLogin(w http.ResponseWriter, r *http.Request) {
 
 func updateData(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Update data start\n")
+	fmt.Printf("____________________________________________________")
+
 	var req struct {
-		Birth_date          string   `json:"birthdate"`
-		Gender              string   `json:"gender"`
-		Preferred_gender    []string `json:"preferred_gender"`
-		Sexual_orientation  string   `json:"sexual_orientation"`
-		Relationship_status string   `json:"relationship_status"`
-		Physical_appearance string   `json:"physical_appearance"`
-		Size                string   `json:"size"`
-		Weight              string   `json:"weight"`
-		Hobbies             string   `json:"hobbies"`
-		Location            string   `json:"location"`
-		Search_distance     string   `json:"search_distance"`
-		Age_range           string   `json:"age_range"`
-		Bio                 string   `json:"bio"`
-		Notifications       string   `json:"notifications"`
-		Terms               string   `json:"terms"`
+		FirstName  string   `json:"firstName"`
+		LastName   string   `json:"lastName"`
+		Dob        string   `json:"dob"`
+		Gender     string   `gender"`
+		Preference string   `preference"`
+		Photos     []string `json:"photos"`
+		Bio        string   `json:"bio"`
 	}
 
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, "Failed to read request body", http.StatusInternalServerError)
-		return
-	}
-	log.Printf("Raw request body: %s", body)
-
-	// Reset the body so it can be read again
-	r.Body = io.NopCloser(bytes.NewBuffer(body))
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		fmt.Printf("Error: %s\n", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
 	fmt.Printf("req: %v\n", req)
-
-	// Process registration logic here...
-	// ajouter les cookies de fin firstStep si besoin
-
-	// postBody, _ := json.Marshal(map[string]string{
-	// 	"nom":      req.Username, // Le nom de famille de l'utilisateur
-	// 	"prenom":   req.Username, // Le prénom de l'utilisateur
-	// 	"email":    req.Email,    // L'email unique de l'utilisateur
-	// 	"password": req.Password, // Le mot de passe de l'utilisateur
-	// })
-	// responseBody := bytes.NewBuffer(postBody)
-	// // Leverage Go's HTTP Post function to make request
-	// resp, err := http.Post("http://localhost:8181/create_user", "application/json", responseBody)
-	// // Handle Error
-	// if err != nil {
-	// 	log.Fatalf("An Error Occured %v", err)
-	// }
-	// defer resp.Body.Close()
-	// // Read the response body
-
-	// responseData, err := io.ReadAll(resp.Body)
-	// if err != nil {
-	// 	log.Fatalf("An Error Occured %v", err)
-	// }
-
-	// fmt.Printf("Response: %s\n", responseData)
-
 	// // if (/*all good*/) {
 	// response := map[string]interface{}{}
 
 	// if resp.StatusCode == 200 {
+	setCookie(w, "1", "firstStep")
 	response := map[string]interface{}{
 		"success": true,
 		"message": "Registration successful",
@@ -265,16 +222,7 @@ func setCookie(w http.ResponseWriter, value string, name string) {
 func getCookie(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	// Récupérer le cookie
-	uidCookie, err := r.Cookie("uid")
-	if err != nil {
-		http.Error(w, `{"error":"No cookie found"}`, http.StatusUnauthorized)
-		return
-	}
-
-	// Réponse JSON correcte
-	response := map[string]string{"uid": uidCookie.Value}
-	json.NewEncoder(w).Encode(response)
+	json.NewEncoder(w).Encode(r.Cookies())
 }
 
 func main() {

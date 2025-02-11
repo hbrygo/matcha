@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Photos</title>
+    <link rel="stylesheet" href="photos.css">
+    <script defer src="photos.js"></script>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Upload Your Photos</h2>
+
+        <!-- Photo de profil obligatoire -->
+        <div class="photo-grid">
+            <div class="photo-box profile" id="profile-box" onclick="selectImage('profile-box')"
+                ondrop="handleDrop(event, 'profile-box')" ondragover="allowDrop(event)">
+                <span class="placeholder">Profile Photo (Required)</span>
+            </div>
+        </div>
+
+        <!-- 4 autres photos optionnelles en carré -->
+        <div class="photo-grid-small">
+            <div class="photo-box" id="box1" onclick="selectImage('box1')" ondrop="handleDrop(event, 'box1')"
+                ondragover="allowDrop(event)">
+                <span class="placeholder">Drop or Click</span>
+            </div>
+            <div class="photo-box" id="box2" onclick="selectImage('box2')" ondrop="handleDrop(event, 'box2')"
+                ondragover="allowDrop(event)">
+                <span class="placeholder">Drop or Click</span>
+            </div>
+            <div class="photo-box" id="box3" onclick="selectImage('box3')" ondrop="handleDrop(event, 'box3')"
+                ondragover="allowDrop(event)">
+                <span class="placeholder">Drop or Click</span>
+            </div>
+            <div class="photo-box" id="box4" onclick="selectImage('box4')" ondrop="handleDrop(event, 'box4')"
+                ondragover="allowDrop(event)">
+                <span class="placeholder">Drop or Click</span>
+            </div>
+        </div>
+
+        <input type="file" id="fileInput" accept="image/*" hidden>
+    </div>
+
+</body>
+
+</html>
+
+
+<script>
+    const fileInput = document.getElementById("fileInput");
+    let currentBox = null;
+
+    function selectImage(boxId) {
+        currentBox = document.getElementById(boxId);
+
+        // Désactiver le clic si une image est déjà présente
+        if (currentBox.querySelector("img")) {
+            return; // Empêcher le clic si une image est présente
+        }
+
+        fileInput.click();
+    }
+
+    fileInput.addEventListener("change", function (event) {
+        if (currentBox && event.target.files.length > 0) {
+            const file = event.target.files[0];
+            displayImage(file, currentBox);
+        }
+    });
+
+    function displayImage(file, box) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            box.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">
+                         <button class="remove-btn" onclick="removeImage('${box.id}')">&times;</button>`;
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    function removeImage(boxId) {
+        const box = document.getElementById(boxId);
+        box.innerHTML = `<span class="placeholder">Drop or Click</span>`;
+    }
+
+    /* Drag & Drop */
+    function allowDrop(event) {
+        event.preventDefault();
+        event.currentTarget.classList.add("drag-over");
+    }
+
+    function handleDrop(event, boxId) {
+        event.preventDefault();
+        event.currentTarget.classList.remove("drag-over");
+
+        const file = event.dataTransfer.files[0];
+        if (file) {
+            displayImage(file, document.getElementById(boxId));
+        }
+    }
+
+</script>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #f3f4f6;
+    }
+
+    .container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 400px;
+        text-align: center;
+    }
+
+    h2 {
+        margin-bottom: 15px;
+    }
+
+    .photo-grid {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+
+    .photo-grid-small {
+        display: flex;
+        /* grid-template-columns: repeat(2, 1fr); */
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .photo-box {
+        width: 100px;
+        height: 100px;
+        border: 2px dashed #aaa;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+        transition: border-color 0.3s ease-in-out;
+    }
+
+    .photo-box.profile {
+        width: 120px;
+        height: 120px;
+        border-color: #3498db;
+    }
+
+    /* Quand on fait glisser une image dessus */
+    .photo-box.drag-over {
+        border-color: #2ecc71;
+        background-color: rgba(46, 204, 113, 0.2);
+    }
+
+    .photo-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+    }
+
+    .placeholder {
+        font-size: 12px;
+        color: #777;
+        text-align: center;
+        padding: 5px;
+    }
+
+    .photo-box .remove-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: red;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .photo-box:hover .remove-btn {
+        display: flex;
+    }
+</style>

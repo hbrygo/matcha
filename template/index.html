@@ -11,7 +11,7 @@
 
 <body>
     <h1>home page</h1>
-    <button onclick="getCookie().then(cookies => console.log(cookies))">Get cookie</button>
+    <button onclick="getCookie()">Get cookie</button>
 </body>
 
 </html>
@@ -31,6 +31,7 @@
                 return response.json();
             })
             .then(data => {
+                console.log(data);
                 return data;
             })
             .catch(error => {
@@ -45,10 +46,15 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         getCookie().then(cookies => {
-            if (!cookies.uid) { // Assuming 'uid' is the cookie that indicates the user is logged in
+            console.log(cookies);
+            const cookiesObj = cookies.reduce((acc, cookie) => {
+                acc[cookie.Name] = cookie.Value;
+                return acc;
+            }, {});
+            if (!cookiesObj.uid) { // Assuming 'uid' is the cookie that indicates the user is logged in
                 loadPage('register');
             }
-            if (!cookies.firstStep) { // Assuming 'terms' is the cookie that indicates the user has accepted the terms
+            if (cookiesObj.uid && !cookiesObj.firstStep) { // Assuming 'terms' is the cookie that indicates the user has accepted the terms
                 loadPage('firstStep');
             }
         });
