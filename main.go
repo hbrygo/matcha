@@ -78,11 +78,13 @@ func checkRegister(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Printf("Response: %s\n", responseData)
+	// fmt.Printf("Response: %v\n", resp)
 
 	// if (/*all good*/) {
 	response := map[string]interface{}{}
 
 	if resp.StatusCode == 200 {
+		// setCookie(w, "1", "firstStep")
 		response = map[string]interface{}{
 			"success": true,
 			"message": "Registration successful",
@@ -100,7 +102,7 @@ func checkRegister(w http.ResponseWriter, r *http.Request) {
 
 func checkLogin(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Check login start\n")
-	fmt.Printf("____________________________________________________")
+	fmt.Printf("____________________________________________________\n")
 	var req struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
@@ -165,21 +167,21 @@ func checkLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
-	fmt.Printf("____________________________________________________")
+	fmt.Printf("____________________________________________________\n")
 	fmt.Printf("Check login end\n")
 }
 
-func updateData(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("Update data start\n")
-	fmt.Printf("____________________________________________________")
-
+func setData(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("Set data start\n")
+	fmt.Printf("____________________________________________________\n")
 	var req struct {
 		FirstName  string   `json:"firstName"`
 		LastName   string   `json:"lastName"`
 		Dob        string   `json:"dob"`
-		Gender     string   `gender"`
-		Preference string   `preference"`
-		Photos     []string `json:"photos"`
+		Gender     string   `json:"gender"`
+		Preference string   `json:"preference"`
+		Interest   []string `json:"interest"`
+		Photos     []string `json:"photos"` // Will contain base64 strings
 		Bio        string   `json:"bio"`
 	}
 
@@ -187,25 +189,25 @@ func updateData(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Printf("req: %v\n", req)
-	// // if (/*all good*/) {
-	// response := map[string]interface{}{}
 
-	// if resp.StatusCode == 200 {
+	fmt.Printf("req: %v\n", req.Interest)
+	// Process base64 images if needed
+	// for i, photo := range req.Photos {
+	//     // Remove base64 header if needed
+	//     // Store images...
+	// }
+
 	setCookie(w, "1", "firstStep")
 	response := map[string]interface{}{
 		"success": true,
 		"message": "Registration successful",
-		"user":    req, // Example user data
+		"user":    req,
 	}
-	// } else {
-	// 	response = map[string]interface{}{
-	// 		"success": false,
-	// 		"message": "Registration failed",
-	// 	}
-	// }
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
+	fmt.Printf("____________________________________________________\n")
+	fmt.Printf("Set data end\n")
 }
 
 func setCookie(w http.ResponseWriter, value string, name string) {
@@ -230,7 +232,7 @@ func main() {
 	http.HandleFunc("GET /getCookie", getCookie)
 	http.HandleFunc("POST /checkRegister", checkRegister)
 	http.HandleFunc("POST /checkLogin", checkLogin)
-	http.HandleFunc("POST /updateData", updateData)
+	http.HandleFunc("POST /setData", setData)
 	fmt.Println("Serveur démarré sur : http://localhost:8080")
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {

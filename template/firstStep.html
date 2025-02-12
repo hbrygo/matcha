@@ -28,7 +28,7 @@
         dob: "",
         gender: "",
         preference: "",
-        interests: [],
+        interest: [],
         photos: [],
         bio: ""
     };
@@ -181,8 +181,6 @@
             formData.gender = document.getElementById("gender").value;
         } else if (step === 4) {
             formData.preference = document.getElementById("preference").value;
-        } else if (step === 6) {
-            // formData.photos = [...document.getElementById("photos").files].map(f => f.name);
         } else if (step === 7) {
             formData.bio = document.getElementById("bio").value;
         }
@@ -199,7 +197,7 @@
         } else if (step === 4) {
             document.getElementById("preference").value = formData.preference;
         } else if (step === 5) {
-            formData.interests.forEach(i => {
+            formData.interest.forEach(i => {
                 const button = document.getElementById(i);
                 button.classList.add("active");
             });
@@ -213,26 +211,23 @@
 
     function removeInterest(interest) {
         console.log(formData.interests);
-        formData.interests = formData.interests.filter(i => i !== interest);
+        formData.interest = formData.interest.filter(i => i !== interest);
         console.log(formData.interests);
     }
 
     function toggleInterest(button, interest) {
-        if (formData.interests.includes(interest)) {
-            // retirer l'interet de formData
-            removeInterest(interest);
-
-            // formData.interests = formData.interests.filter(i => i !== interest);
+        if (formData.interest.includes(interest)) {
+            formData.interest = formData.interest.filter(i => i !== interest);
             button.classList.remove("active");
         } else {
-            formData.interests.push(interest);
+            formData.interest.push(interest);
             button.classList.add("active");
         }
     }
 
     function submitForm() {
-        console.log(formData);
-        fetch('/updateData', {
+        console.log('formData', formData);
+        fetch('/setData', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -246,8 +241,8 @@
                 return response.json();
             })
             .then(data => {
-                console.log(data);
-                loadPage('home');
+                console.log("data", data);
+                loadPage('index');
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -293,53 +288,73 @@
     }
 
     document.onload = checkLogin();
-    let fileInput = null;
-    function setFileInput() {
-        // if (fileInput == null && currentStep === 6) {
-        console.log("fileInput is null");
-        fileInput = document.getElementById("fileInput");
-        console.log(fileInput);
-        // }
-    }
+    // let fileInput = null;
 
     function selectImage(boxId) {
-        console.log('ici');
+        var input;
+
+        console.log('click');
         currentBox = document.getElementById(boxId);
-
-        // Désactiver le clic si une image est déjà présente
-        if (currentBox.querySelector("img")) {
-            return; // Empêcher le clic si une image est présente
-        }
-
-        // console.log("fileInput", fileInput);
-        if (fileInput == null)
-            setFileInput();
-        fileInput.click();
-        console.log('value: ', fileInput);
-
+        // console.log(currentBox);
+        input = document.getElementById("fileInput");
+        // console.log(fileInput);
+        input.addEventListener("change", function (event) {
+            if (currentBox && event.target.files.length > 0) {
+                const file = event.target.files[0];
+                console.log("Changement ici!!");
+                displayImage(file, currentBox);
+            }
+        });
+        input.click();
     }
 
-    fileInput.addEventListener("change", function (event) {
-        if (currentBox && event.target.files.length > 0) {
-            const file = event.target.files[0];
-            displayImage(file, currentBox);
-        }
-    });
+    // fileInput.addEventListener("change", function (event) {
+    //     if (currentBox && event.target.files.length > 0) {
+    //         const file = event.target.files[0];
+    //         console.log("Changement ici!!");
+    //         displayImage(file, currentBox);
+    //     }
+    // });
 
-    function displayImage(file, box) {
+    function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    }
+
+    // Modify displayImage function
+    async function displayImage(file, box) {
         const reader = new FileReader();
-
         reader.onload = function (e) {
             box.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">
-                         <button class="remove-btn" onclick="removeImage('${box.id}')">&times;</button>`;
+                     <button class="remove-btn" onclick="removeImage('${box.id}')">&times;</button>`;
         };
-
         reader.readAsDataURL(file);
+
+        // Convert to base64 and store
+        const base64 = await fileToBase64(file);
+        formData.photos.push(base64);
     }
+
+    // function displayImage(file, box) {
+    //     const reader = new FileReader();
+
+    //     reader.onload = function (e) {
+    //         box.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">
+    //                      <button class="remove-btn" onclick="removeImage('${box.id}')">&times;</button>`;
+    //     };
+
+    //     reader.readAsDataURL(file);
+    //     formData.photos.push(file);
+    // }
 
     function removeImage(boxId) {
         const box = document.getElementById(boxId);
         box.innerHTML = `<span class="placeholder">Drop or Click</span>`;
+        formData.photos = formData.photos.filter(p => p.name !== boxId);
     }
 
     /* Drag & Drop */
