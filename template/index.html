@@ -4,14 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <title>Document</title> -->
-    <title>Home</title>
-    <link rel="stylesheet" href="https://cdn.tailwindcss.com">
+    <title>Tinder-like Cards</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 </head>
 
 <body>
-    <h1>home page</h1>
-    <button onclick="getCookie()">Get cookie</button>
+
+    <div class="tinder">
+        <!-- <div class="tinder--status">
+            <i class="fa fa-remove"></i>
+            <i class="fa fa-heart"></i>
+        </div> -->
+
+        <div class="tinder--cards">
+            <!-- <div class="tinder--card">
+                <img src="https://placeimg.com/600/300/people">
+                <h3>Demo card 1</h3>
+                <p>This is a demo for Tinder like swipe cards</p>
+            </div>
+            <div class="tinder--card">
+                <img src="https://placeimg.com/600/300/animals">
+                <h3>Demo card 2</h3>
+                <p>This is a demo for Tinder like swipe cards</p>
+            </div>
+            <div class="tinder--card">
+                <img src="https://placeimg.com/600/300/nature">
+                <h3>Demo card 3</h3>
+                <p>This is a demo for Tinder like swipe cards</p>
+            </div>
+            <div class="tinder--card">
+                <img src="https://placeimg.com/600/300/tech">
+                <h3>Demo card 4</h3>
+                <p>This is a demo for Tinder like swipe cards</p>
+            </div>
+            <div class="tinder--card">
+                <img src="https://placeimg.com/600/300/arch">
+                <h3>Demo card 5</h3>
+                <p>This is a demo for Tinder like swipe cards</p>
+            </div> -->
+        </div>
+
+        <div class="tinder--buttons">
+            <button id="nope"><i class="fa fa-remove"></i></button>
+            <button id="love"><i class="fa fa-heart"></i></button>
+        </div>
+    </div>
 </body>
 
 </html>
@@ -59,4 +99,140 @@
             }
         });
     });
+
+    var tinderContainer = document.querySelector('.tinder--cards');
+    var allCards = document.querySelectorAll('.tinder--card');
+
+    function addCard(image, name, age, distance, bio, tag) {
+        var newCard = document.createElement('div');
+        newCard.classList.add('tinder--card');
+        newCard.id = 'card';
+
+        var img = document.createElement('img');
+        img.src = image;
+
+        var content = document.createElement('div');
+        content.classList.add('tinder--card-content');
+        content.innerHTML = `<h3>${name}, ${age}</h3>
+                            <p>${tag}</p>
+                            <p>${distance} km away</p>
+                            <p>${bio}</p>`;
+
+        newCard.appendChild(img);
+        newCard.appendChild(content);
+        document.querySelector('.tinder--cards').appendChild(newCard);
+    }
+
+    function loadNextProfile(i) {
+        // appeler le back pour avoir le prochain profil
+        if (i == 1)
+            addCard("images/MainAfter.jpg", "name", "age", "distance", "bio", "tag");
+        else
+            addCard("images/Chat.png", "name", "age", "distance", "bio", "tag");
+    }
+
+    loadNextProfile(0);
+
+    document.getElementById('love').addEventListener('click', function () {
+        console.log('love');
+        let currentCard = document.getElementById('card');
+        if (currentCard) {
+            currentCard.style.transform = 'translate(150%, -50%) rotate(30deg)';
+            currentCard.style.opacity = '0';
+            setTimeout(() => {
+                currentCard.remove();
+                // currentCard = allCards[1];
+                loadNextProfile(1);
+            }, 300);
+        }
+    });
+
+    document.getElementById('nope').addEventListener('click', function () {
+        console.log('nope');
+        let currentCard = document.getElementById('card');
+        if (currentCard) {
+            currentCard.style.transform = 'translate(-150%, -50%) rotate(-30deg)';
+            currentCard.style.opacity = '0';
+            setTimeout(() => {
+                currentCard.remove();
+                loadNextProfile(1);
+            }, 300);
+        }
+    });
 </script>
+
+<style>
+    .tinder {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        /* position: relative; */
+        /* min-height: 100vh; */
+        display: flex;
+        margin-top: 20%;
+    }
+
+    .tinder--card {
+        display: flex;
+        flex-direction: column;
+        /* Met l'image en haut et le texte en bas */
+        width: 90%;
+        max-width: 400px;
+        height: auto;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        position: absolute;
+        will-change: transform;
+        transition: all 0.3s ease-in-out;
+        cursor: grab;
+        left: 50%;
+        transform: translateX(-50%);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .tinder--card img {
+        width: 100%;
+        height: 35vh;
+        object-fit: cover;
+    }
+
+    .tinder--card-content {
+        padding: 15px;
+        background: white;
+        color: black;
+    }
+
+    .tinder--card h3,
+    .tinder--card p {
+        margin: 5px 0;
+    }
+
+
+    .tinder--buttons {
+        position: fixed;
+        bottom: 50px;
+        left: 0;
+        right: 0;
+        text-align: center;
+    }
+
+    .tinder--buttons button {
+        border-radius: 50%;
+        line-height: 60px;
+        width: 60px;
+        border: 0;
+        margin: 0 10px;
+        font-size: 24px;
+    }
+
+    #nope {
+        background: #ff6b6b;
+        color: white;
+    }
+
+    #love {
+        background: #42b983;
+        color: white;
+    }
+</style>

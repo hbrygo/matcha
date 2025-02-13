@@ -233,6 +233,9 @@ func main() {
 	http.HandleFunc("POST /checkRegister", checkRegister)
 	http.HandleFunc("POST /checkLogin", checkLogin)
 	http.HandleFunc("POST /setData", setData)
+	http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("images"))))
+	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
+	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("js"))))
 	fmt.Println("Serveur démarré sur : http://localhost:8080")
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
