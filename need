@@ -23,6 +23,11 @@ curl -X POST http://localhost:8181/create_user \
 Réponses possibles :
 
 200 : Utilisateur créé avec succès
+{
+    "user": {
+        "uid": "uid" // int unique que tu peux choisir
+    }
+}
 400 : Données manquantes
 409 : Email déjà utilisé
 410 : Username deja utilise
@@ -73,7 +78,12 @@ curl -X POST http://localhost:8181/get_user \
     "user": {
         "nom": "Test",
         "prenom": "User",
-        <!-- toutes les infos rentre precedement (orientation, sexe, age, ...) -->
+        "dob": "dob", // date of birth
+        "gender": "gender",
+        "preference": "preference",
+        "interests": []"interests" // tableau
+        "picture": []"picture" //tableau et ca peut encore changer en fonction de comment est stocker l'image
+        "bio": "bio"
     }
 }
 
@@ -133,11 +143,10 @@ curl -X POST http://localhost:8181/login \
 {
     "user": {
         "uid": 1,
-        "firstStep": 1
     }
 }
 
-200 : Utilisateur trouvé (avec ses informations)
+200 : Utilisateur trouvé + uid
 400 : Données manquantes ou format incorrect
 404 : Utilisateur non trouvé -> a definir peut etre 401
 500 : Erreur serveur
@@ -172,10 +181,16 @@ curl -X POST http://localhost:8181/me \
 200 : Utilisateur trouvé, avec les données suivantes :
 {
     "user": {
+        "username": "username"
+        "email": "test@exemple.com"
         "nom": "Test",
         "prenom": "User",
-        "email": "test@exemple.com"
-        <!-- toutes les infos rentre precedement (orientation, sexe, age, ...) -->
+        "dob": "dob", // date of birth
+        "gender": "gender",
+        "preference": "preference",
+        "interests": []"interests" // tableau
+        "picture": []"picture" //tableau et ca peut encore changer en fonction de comment est stocker l'image
+        "bio": "bio"
     }
 }
 
@@ -209,20 +224,18 @@ Recherche par UID :
 curl -X POST http://localhost:8181/me \
      -H "Content-Type: application/json" \
      -d '{
-           "uid": 1
+            "uid": 1
+            "nom": "Test",
+            "prenom": "User",
+            "dob": "dob", // date of birth
+            "gender": "gender",
+            "preference": "preference",
+            "interests": []"interests" // tableau
+            "picture": []"picture" //tableau et ca peut encore changer en fonction de comment est stocker l'image
+            "bio": "bio"
          }'
 
-200 : Utilisateur trouvé, avec les données suivantes :
-{
-    "user": {
-        "nom": "Test",
-        "prenom": "User",
-        "email": "test@exemple.com"
-        <!-- toutes les infos rentre precedement (orientation, sexe, age, ...) -->
-    }
-}
-
-200 : Utilisateur trouvé (avec ses informations)
+200 : Information update correctement
 400 : Données manquantes ou format incorrect
 404 : Utilisateur non trouvé -> a definir peut etre 401
 500 : Erreur serveur
