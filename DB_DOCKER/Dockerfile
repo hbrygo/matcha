@@ -1,29 +1,31 @@
-# Image de base légère
-FROM alpine:3.18
+# go 1.24 
+FROM golang:1.24-alpine
 
-# Installation des paquets nécessaires
+# necessary packages
 RUN apk add --no-cache \
-    python3 \
-    py3-pip \
     sqlite \
-    sqlite-dev
+    sqlite-dev \
+    gcc \
+    musl-dev \
+    git
 
-# Installation des dépendances Python pour le serveur
-RUN pip3 install --no-cache-dir \
-    flask \
-    flask-sqlalchemy
-
-# Création du répertoire de travail
+# working directory
 WORKDIR /app
 
-# Création du répertoire pour la base de données
+# Copy files 
+COPY go.mod go.sum ./
+COPY . .
+
+# install go dependancies
+RUN go mod download
+
+# creation DB folder
 RUN mkdir -p /app/data
 
-# Copie du fichier de l'application
-COPY app.py .
+# construction of app 
+RUN CGO_ENABLED=1 go build -o main .
 
-# Exposition du port 8181
+# port 8181
 EXPOSE 8181
 
-# Lancement de l'application Flask au démarrage
-CMD ["python3", "app.py"]
+CMD ["./main"]
