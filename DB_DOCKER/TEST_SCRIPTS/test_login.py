@@ -132,8 +132,8 @@ def test_login_endpoint():
     # Test 1: Login avec Email
     print_test_header("Login avec Email")
     email_login = {
-        "Email": "test@exemple.com",
-        "Mot de passe": "Test123!@#"  # Même mot de passe que celui créé
+        "email": "test@exemple.com",
+        "Mot de password": "Test123!@#"  # Même mot de passe que celui créé
     }
     response = make_request(email_login)
     if print_test_result("Login avec Email", response, 200):
@@ -142,8 +142,8 @@ def test_login_endpoint():
     # Test 2: Login avec Username
     print_test_header("Login avec Username")
     username_login = {
-        "Username": "testuser",
-        "Mot de passe": "Test123!@#"  # Même mot de passe que celui créé
+        "usename": "testuser",
+        "password": "Test123!@#"  # Même mot de passe que celui créé
     }
     response = make_request(username_login)
     if print_test_result("Login avec Username", response, 200):
@@ -153,7 +153,7 @@ def test_login_endpoint():
     print_test_header("Email invalide")
     invalid_email = {
         "Email": "nonexistent@exemple.com",
-        "Mot de passe": "Test123!@#"
+        "password": "Test123!@#"
     }
     response = make_request(invalid_email)
     if print_test_result("Email invalide", response, 404):
@@ -163,7 +163,7 @@ def test_login_endpoint():
     print_test_header("Mot de passe incorrect")
     wrong_password = {
         "Email": "test@exemple.com",
-        "Mot de passe": "wrongpassword"
+        "password": "wrongpassword"
     }
     response = make_request(wrong_password)
     if print_test_result("Mot de passe incorrect", response, 401):

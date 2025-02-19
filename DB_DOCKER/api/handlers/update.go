@@ -3,14 +3,15 @@ package handlers
 import (
 	//"database/sql"
 	"encoding/json"
+	"fmt"
 	"matcha/database"
 	"net/http"
 )
 
 type UpdateRequest struct {
 	UID        int      `json:"uid"`
-	Nom        string   `json:"nom"`
-	Prenom     string   `json:"prenom"`
+	Nom        string   `json:"lastName"`
+	Prenom     string   `json:"firstName"`
 	DOB        string   `json:"dob"`
 	Gender     string   `json:"gender"`
 	Preference string   `json:"preference"`
@@ -46,6 +47,12 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 	// verif input
 	if req.Nom == "" || req.Prenom == "" || req.DOB == "" || req.Gender == "" ||
 		req.Preference == "" || req.Bio == "" {
+		fmt.Printf("req.nom: %v\n", req.Nom)
+		fmt.Printf("req.prenom: %v\n", req.Prenom)
+		fmt.Printf("req.DOB: %v\n", req.DOB)
+		fmt.Printf("req.Gender: %v\n", req.Gender)
+		fmt.Printf("req.Preference: %v\n", req.Preference)
+		fmt.Printf("req.bio: %v\n", req.Bio)
 		http.Error(w, "Champs obligatoires manquants", http.StatusBadRequest)
 		return
 	}

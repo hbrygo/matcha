@@ -218,7 +218,7 @@ Par UID :
 Exemples de requêtes curl :
 
 Recherche par UID :
-curl -X POST http://localhost:8181/me \
+curl -X POST http://localhost:8181/update \
      -H "Content-Type: application/json" \
      -d '{
             "uid": 1

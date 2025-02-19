@@ -3,10 +3,12 @@ package handlers
 import (
 	//"database/sql"
 	"encoding/json"
-	"golang.org/x/crypto/bcrypt"
+	"fmt"
 	"matcha/database"
 	"net/http"
 	"regexp"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // CreateUserRequest defines the expected request structure
@@ -27,24 +29,28 @@ type CreateUserResponse struct {
 func validatePassword(password string) bool {
 	// Minimum 8 characters
 	if len(password) < 8 {
+		fmt.Printf("Password too short")
 		return false
 	}
 
 	// Check for at least one number
 	num := regexp.MustCompile(`[0-9]`)
 	if !num.MatchString(password) {
+		fmt.Printf("Password no number")
 		return false
 	}
 
 	// Check for at least one uppercase letter
 	upper := regexp.MustCompile(`[A-Z]`)
 	if !upper.MatchString(password) {
+		fmt.Printf("Password no upper")
 		return false
 	}
 
 	// Check for at least one special character
 	special := regexp.MustCompile(`[!@#$%^&*]`)
 	if !special.MatchString(password) {
+		fmt.Printf("Password no special")
 		return false
 	}
 

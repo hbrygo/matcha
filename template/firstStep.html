@@ -24,6 +24,7 @@
 
 <script>
     let formData = {
+        uid: "",
         firstName: "",
         lastName: "",
         dob: "",
@@ -180,6 +181,7 @@
             formData.dob = document.getElementById("dob").value;
         } else if (step === 3) {
             formData.gender = document.getElementById("gender").value;
+            console.log(formData.gender);
         } else if (step === 4) {
             formData.preference = document.getElementById("preference").value;
         } else if (step === 7) {
@@ -276,6 +278,8 @@
                 if (!cookiesObj.uid) {
                     loadPage('register');
                 } else if (cookiesObj.uid && !cookiesObj.firstStep) {
+                    // convert uid to string
+                    formData.uid = cookiesObj.uid.toString();
                     nextStep(1);
                 } else {
                     loadPage('index');
@@ -411,7 +415,7 @@
 
     .progress {
         height: 100%;
-        background: #3498db;
+        background: #ff6b6b;
         width: 14%;
         border-radius: 5px;
         transition: width 0.3s ease-in-out;
@@ -433,7 +437,7 @@
     }
 
     .input-field:focus {
-        border-color: #3498db;
+        border-color: #ff6b6b;
         box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
     }
 
@@ -447,14 +451,14 @@
         padding: 10px 15px;
         border: none;
         border-radius: 5px;
-        background-color: #3498db;
+        background-color: #ff6b6b;
         color: white;
         cursor: pointer;
         transition: 0.3s;
     }
 
     button:hover {
-        background-color: #2980b9;
+        background-color: #e55a5a;
     }
 
     .submit {
@@ -480,12 +484,12 @@
     }
 
     .tag:hover {
-        background: #3498db;
+        background: #ff6b6b;
         color: white;
     }
 
     .active {
-        background: #3498db;
+        background: #ff6b6b;
         color: white;
     }
 
@@ -519,7 +523,7 @@
     .photo-box.profile {
         width: 120px;
         height: 120px;
-        border-color: #3498db;
+        border-color: #ff6b6b;
     }
 
     /* Quand on fait glisser une image dessus */

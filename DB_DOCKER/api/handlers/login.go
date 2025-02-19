@@ -3,15 +3,16 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"golang.org/x/crypto/bcrypt"
 	"matcha/database"
 	"net/http"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type LoginRequest struct {
-	Email    string `json:"Email,omitempty"`
-	Username string `json:"Username,omitempty"`
-	Password string `json:"Mot de passe"`
+	Email    string `json:"email,omitempty"`
+	Username string `json:"username,omitempty"`
+	Password string `json:"password"`
 }
 
 type LoginResponse struct {

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tinder-like Cards</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="/" class="logo">Matcha</a>
+        </div>
+        <ul class="navbar-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/chat">Messages</a></li>
+            <li><a href="/settings">Settings</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="split-container">
+        <div class="edit-section">
+            <!-- Add your form elements here -->
+            <form>
+                <h2>Edit Profile</h2>
+                <!-- Add form fields -->
+            </form>
+        </div>
+
+        <div class="card-section">
+            <div class="tinder--cards">
+                <h1 class="title">Your profile</h1>
+                <!-- Add your card elements here -->
+            </div>
+            <!-- Your existing tinder card structure -->
+            <div class="tinder">
+                <!-- ...existing code... -->
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script>
+    function addCard(image, name, age, distance, bio, tag) {
+        var newCard = document.createElement('div');
+        newCard.classList.add('tinder--card');
+        newCard.id = 'card';
+
+        var img = document.createElement('img');
+        img.src = image;
+
+        var content = document.createElement('div');
+        content.classList.add('tinder--card-content');
+        content.innerHTML = `<h3>${name}, ${age}</h3>
+                            <p>${tag}</p>
+                            <p>${distance} km away</p>
+                            <p>${bio}</p>`;
+
+        newCard.appendChild(img);
+        newCard.appendChild(content);
+        document.querySelector('.tinder--cards').appendChild(newCard);
+    }
+
+    addCard("images/MainAfter.jpg", "name", "age", "distance", "bio", "tag, tag2, tag3");
+</script>
+
+<style>
+    .title {
+        text-align: center;
+        margin-top: 15vh;
+        margin-left: 65%;
+        width: 100%;
+        color: #ff6b6b;
+    }
+
+    /* Main container */
+    .split-container {
+        display: flex;
+        min-height: 100vh;
+        width: 100%;
+        padding: 20px;
+        gap: 20px;
+    }
+
+    /* Left side - Form section */
+    .edit-section {
+        flex: 1;
+        padding: 20px;
+        background-color: #f5f5f5;
+        border-radius: 10px;
+        min-width: 300px;
+    }
+
+    /* Right side - Card section */
+    .card-section {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-width: 300px;
+    }
+
+    /* Adjust existing card styles */
+    .tinder {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    /* Responsive layout */
+    @media (max-width: 768px) {
+        .split-container {
+            flex-direction: column;
+        }
+
+        .edit-section,
+        .card-section {
+            width: 100%;
+        }
+
+        .tinder--card img {
+            height: 25vh;
+        }
+    }
+
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .navbar-brand .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ff6b6b;
+        text-decoration: none;
+    }
+
+    .navbar-menu {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .navbar-menu li {
+        margin: 0 1rem;
+    }
+
+    .navbar-menu a {
+        color: #333;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .navbar-menu a:hover {
+        color: #ff6b6b;
+    }
+
+    @media (max-width: 768px) {
+        .navbar-menu {
+            display: none;
+        }
+    }
+
+    .tinder {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        /* position: relative; */
+        /* min-height: 100vh; */
+        display: flex;
+        margin-top: 10%;
+    }
+
+    .tinder--card {
+        display: flex;
+        flex-direction: column;
+        margin-top: 10vh;
+        margin-left: 20vh;
+        /* align-items: center; */
+        /* Met l'image en haut et le texte en bas */
+        width: 90%;
+        max-width: 400px;
+        height: auto;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        will-change: transform;
+        /* transition: all 0.3s ease-in-out; */
+        cursor: grab;
+        /* transform: translateX(-50%); */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        /* Prevent default touch actions */
+        touch-action: none;
+        /* Prevent text selection during drag */
+        user-select: none;
+    }
+
+    .tinder--card img {
+        width: 100%;
+        height: 35vh;
+        object-fit: cover;
+    }
+
+    .tinder--card-content {
+        padding: 15px;
+        background: white;
+        color: black;
+    }
+
+    .tinder--card h3,
+    .tinder--card p {
+        margin: 5px 0;
+    }
+
+
+    .tinder--buttons {
+        position: fixed;
+        bottom: 50px;
+        left: 0;
+        right: 0;
+        text-align: center;
+    }
+
+    .tinder--buttons button {
+        border-radius: 50%;
+        line-height: 60px;
+        width: 60px;
+        border: 0;
+        margin: 0 10px;
+        font-size: 24px;
+    }
+
+    .tinder--card.moving {
+        /* Disable transition while dragging */
+        transition: none;
+    }
+
+    #nope {
+        background: #ff6b6b;
+        color: white;
+    }
+
+    #love {
+        background: #42b983;
+        color: white;
+    }
+</style>

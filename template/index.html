@@ -104,7 +104,7 @@
                 return acc;
             }, {});
             if (!cookiesObj.uid) { // Assuming 'uid' is the cookie that indicates the user is logged in
-                loadPage('login');
+                loadPage('register');
             }
             if (cookiesObj.uid && !cookiesObj.firstStep) { // Assuming 'terms' is the cookie that indicates the user has accepted the terms
                 loadPage('firstStep');
