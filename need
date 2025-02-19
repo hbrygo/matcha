@@ -58,10 +58,7 @@ Pour récupérer les informations d'un utilisateur via l'API, voici les spécifi
 
 Endpoint : POST http://localhost:8181/get_user
 
-Par UID :
-{
-    "uid": integer    // L'identifiant unique de l'utilisateur
-}
+Par UID :setCookie
 
 
 Exemples de requêtes curl :

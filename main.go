@@ -227,8 +227,22 @@ func getCookie(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(r.Cookies())
 }
 
+func deleteCookie(w http.ResponseWriter, name string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:  name,
+		Value: "",
+	})
+}
+
+func logout(w http.ResponseWriter, r *http.Request) {
+	deleteCookie(w, "uid")
+	deleteCookie(w, "firstStep")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
 func main() {
 	http.HandleFunc("/", sendPage)
+	http.HandleFunc("/logout", logout)
 	http.HandleFunc("GET /getCookie", getCookie)
 	http.HandleFunc("POST /checkRegister", checkRegister)
 	http.HandleFunc("POST /checkLogin", checkLogin)
