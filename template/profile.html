@@ -4,11 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tinder-like Cards</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <title>Responsive Split Page</title>
 </head>
 
 <body>
@@ -25,23 +21,97 @@
         </ul>
     </nav>
 
-    <div class="split-container">
-        <div class="edit-section">
-            <!-- Add your form elements here -->
-            <form>
-                <h2>Edit Profile</h2>
-                <!-- Add form fields -->
+    <div class="container">
+        <div class="left-side">
+            <form id="profile-form">
+                <label for="first-name">First Name</label>
+                <input type="text" id="first-name" name="first-name" required>
+
+                <label for="last-name">Last Name</label>
+                <input type="text" id="last-name" name="last-name" required>
+
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" min="18" required>
+
+                <label>Interest</label>
+                <div class="interests" id="interests">
+                    <button type="button" class="tag" onclick="toggleInterest(this, 'Sports')">Sports</button>
+                    <button type="button" class="tag" onclick="toggleInterest(this, 'Reading')">Reading</button>
+                    <button type="button" class="tag" onclick="toggleInterest(this, 'Tattoo')">Tattoo</button>
+                    <button type="button" class="tag" onclick="toggleInterest(this, 'Vegan')">Vegan</button>
+                    <button type="button" class="tag" onclick="toggleInterest(this, 'Gaming')">Gaming</button>
+                    <button type="button" class="tag" onclick="toggleInterest(this, 'Traveling')">Traveling</button>
+                </div>
+
+                <label for="gender">Gender</label>
+                <select id="gender" name="gender">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <label>Preference</label>
+                <div class="preferences" id="preferences">
+                    <button id="Men" type="button" class="tag" onclick="togglePreference(this, 'Men')">Men</button>
+                    <button id="Women" type="button" class="tag"
+                        onclick="togglePreference(this, 'Women')">Women</button>
+                    <button id="Other" type="button" class="tag"
+                        onclick="togglePreference(this, 'Other')">Other</button>
+                </div>
+
+                <label id="bioLabel" for="bio">Bio</label>
+                <textarea id="bioArea" name="bio" rows="4"></textarea>
+
+                <label>Images</label>
+                <!-- Photo de profil obligatoire -->
+                <div class="photo-grid">
+                    <div class="photo-box profile" id="profile-box" onclick="selectImage('profile-box')"
+                        ondrop="handleDrop(event, 'profile-box')" ondragover="allowDrop(event)">
+                        <span class="placeholder">Profile Photo (Required)</span>
+                    </div>
+                </div>
+
+                <!-- 4 autres photos optionnelles en carré -->
+                <div class="photo-grid-small">
+                    <div class="photo-box" id="box1" onclick="selectImage('box1')" ondrop="handleDrop(event, 'box1')"
+                        ondragover="allowDrop(event)">
+                        <span class="placeholder">Drop or Click</span>
+                    </div>
+                    <div class="photo-box" id="box2" onclick="selectImage('box2')" ondrop="handleDrop(event, 'box2')"
+                        ondragover="allowDrop(event)">
+                        <span class="placeholder">Drop or Click</span>
+                    </div>
+                    <div class="photo-box" id="box3" onclick="selectImage('box3')" ondrop="handleDrop(event, 'box3')"
+                        ondragover="allowDrop(event)">
+                        <span class="placeholder">Drop or Click</span>
+                    </div>
+                    <div class="photo-box" id="box4" onclick="selectImage('box4')" ondrop="handleDrop(event, 'box4')"
+                        ondragover="allowDrop(event)">
+                        <span class="placeholder">Drop or Click</span>
+                    </div>
+                </div>
+                <input type="file" id="fileInput" accept="image/*" hidden>
+                <!-- <div class="image-grid">
+                    <div class="main-image"><input type="file" id="main-image" name="main-image"></div>
+                    <div class="small-images">
+                        <input type="file" name="image-1">
+                        <input type="file" name="image-2">
+                        <input type="file" name="image-3">
+                        <input type="file" name="image-4">
+                    </div>
+                </div> -->
             </form>
         </div>
 
-        <div class="card-section">
-            <div class="tinder--cards">
-                <h1 class="title">Your profile</h1>
-                <!-- Add your card elements here -->
-            </div>
-            <!-- Your existing tinder card structure -->
-            <div class="tinder">
-                <!-- ...existing code... -->
+        <div class="right-side">
+            <div class="tinder--card">
+                <img src="images/MainAfter.jpg" alt="Profile Picture">
+                <div class="tinder--card-content">
+                    <h3 id="nameAge">John Doe, 25</h3>
+                    <p id="interest">Traveling, Gaming</p>
+                    <p id="range">5 km away</p>
+                    <p id="bioInCard">Adventurous and love exploring new places!</p>
+                </div>
             </div>
         </div>
     </div>
@@ -50,86 +120,227 @@
 </html>
 
 <script>
-    function addCard(image, name, age, distance, bio, tag) {
-        var newCard = document.createElement('div');
-        newCard.classList.add('tinder--card');
-        newCard.id = 'card';
-
-        var img = document.createElement('img');
-        img.src = image;
-
-        var content = document.createElement('div');
-        content.classList.add('tinder--card-content');
-        content.innerHTML = `<h3>${name}, ${age}</h3>
-                            <p>${tag}</p>
-                            <p>${distance} km away</p>
-                            <p>${bio}</p>`;
-
-        newCard.appendChild(img);
-        newCard.appendChild(content);
-        document.querySelector('.tinder--cards').appendChild(newCard);
+    function toggleInterest(element, interest) {
+        element.classList.toggle('active');
     }
 
-    addCard("images/MainAfter.jpg", "name", "age", "distance", "bio", "tag, tag2, tag3");
+    function togglePreference(element, preference) {
+        element.classList.toggle('active');
+    }
+
+    var nameAge = document.getElementById('nameAge');
+    var interest = document.getElementById('interest');
+    var range = document.getElementById('range');
+    var bio = document.getElementById('bioInCard');
+
+    function updateNameAge() {
+        nameAge.innerText = document.getElementById('first-name').value + ' ' + document.getElementById('last-name').value + ', ' + document.getElementById('age').value;
+    }
+
+    document.getElementById('first-name').addEventListener('input', updateNameAge);
+    document.getElementById('last-name').addEventListener('input', updateNameAge);
+    document.getElementById('age').addEventListener('input', updateNameAge);
+    document.getElementById('bioArea').addEventListener('input', function () {
+        bio.innerText = this.value;
+    });
+    document.getElementById('interests').addEventListener('click', function () {
+        interest.innerText = Array.from(this.children).filter(tag => tag.classList.contains('active')).map(tag => tag.innerText).join(', ');
+    });
+
+    function setAge(dob) {
+        const age = new Date().getFullYear() - new Date(dob).getFullYear();
+        document.getElementById('age').value = age;
+    }
+
+    function setInterest(interest) {
+        const interests = document.getElementById('interest');
+        interest.forEach(i => {
+            const tag = interests.querySelector(`button:contains('${i}')`);
+            if (tag) {
+                tag.classList.add('active');
+            }
+        });
+    }
+
+    function setPreference(preference) {
+        // passe preference en tableau si c'est une chaine
+        if (typeof preference === 'string') {
+            preference = [preference];
+        }
+        const preferences = document.getElementById('preferences');
+        preference.forEach(p => {
+            if (p == 'female') p = 'Women';
+            const tag = document.getElementById(p);
+            if (tag) {
+                tag.classList.add('active');
+            }
+        });
+    }
+
+    function updateAll() {
+        updateNameAge();
+        document.getElementById('bioArea').dispatchEvent(new Event('input'));
+        document.getElementById('interests').dispatchEvent(new Event('click'));
+    }
+
+    /*********************************** Gestion des images ****************************************/
+
+    function selectImage(boxId) {
+        var input;
+
+        console.log('click');
+        currentBox = document.getElementById(boxId);
+        // console.log(currentBox);
+        input = document.getElementById("fileInput");
+        // console.log(fileInput);
+        input.addEventListener("change", function (event) {
+            if (currentBox && event.target.files.length > 0) {
+                const file = event.target.files[0];
+                console.log("Changement ici!!");
+                displayImage(file, currentBox);
+            }
+        });
+        input.click();
+    }
+
+    function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    }
+
+    // Modify displayImage function
+    async function displayImage(file, box) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            box.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">
+                     <button class="remove-btn" onclick="removeImage('${box.id}')">&times;</button>`;
+        };
+        reader.readAsDataURL(file);
+
+        // Convert to base64 and store
+        const base64 = await fileToBase64(file);
+        // formData.photos.push(base64);
+        // si l'id de la box est "profile-box" ajouter l'image aussi sur la carte
+        if (box.id === "profile-box") {
+            document.querySelector('.tinder--card img').src = base64;
+        }
+    }
+
+    function removeImage(boxId) {
+        const box = document.getElementById(boxId);
+        box.innerHTML = `<span class="placeholder">Drop or Click</span>`;
+        // formData.photos = formData.photos.filter(p => p.name !== boxId);
+    }
+
+    function allowDrop(event) {
+        event.preventDefault();
+        event.currentTarget.classList.add("drag-over");
+    }
+
+    function handleDrop(event, boxId) {
+        event.preventDefault();
+        event.currentTarget.classList.remove("drag-over");
+
+        const file = event.dataTransfer.files[0];
+        console.log(file);
+        if (file) {
+            displayImage(file, document.getElementById(boxId));
+        }
+    }
+    /* ********************************* Fetch *************************************** */
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Récupérer les données de l'utilisateur
+        fetch('/me', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log("data: ", data.user);
+                document.getElementById('first-name').value = data.user.nom;
+                document.getElementById('last-name').value = data.user.prenom;
+                setAge(data.user.dob);
+                // setInterest(data.user.interest);
+                document.getElementById('gender').value = data.user.gender;
+                setPreference(data.user.preference);
+                document.getElementById('bioArea').value = data.user.bio;
+                // setImages(data.user.images);
+                updateAll();
+            });
+    });
+
 </script>
 
 <style>
-    .title {
-        text-align: center;
-        margin-top: 15vh;
-        margin-left: 65%;
-        width: 100%;
-        color: #ff6b6b;
+    /* ********************************* CSS Principale *************************************** */
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
 
-    /* Main container */
-    .split-container {
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
         display: flex;
-        min-height: 100vh;
-        width: 100%;
-        padding: 20px;
-        gap: 20px;
+        flex-direction: row;
+        height: calc(100vh - 60px);
+        /* Subtract the navbar height */
     }
 
-    /* Left side - Form section */
-    .edit-section {
-        flex: 1;
+    .left-side {
+        width: 50%;
         padding: 20px;
-        background-color: #f5f5f5;
-        border-radius: 10px;
-        min-width: 300px;
+        overflow-y: auto;
+        padding: 20px;
+        background-color: #f4f4f4;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 60px;
+        /* Ajoutez une marge en haut pour éviter que la navbar cache le contenu */
     }
 
-    /* Right side - Card section */
-    .card-section {
-        flex: 1;
+    .right-side {
         display: flex;
         justify-content: center;
-        align-items: flex-start;
-        min-width: 300px;
+        align-items: center;
+        height: 100%;
+        /* Prend toute la hauteur disponible */
+        padding: 20px;
+        background-color: #fff;
+        width: 50%;
     }
 
-    /* Adjust existing card styles */
-    .tinder {
-        width: 100%;
-        max-width: 500px;
-    }
-
-    /* Responsive layout */
+    /* Responsiveness */
     @media (max-width: 768px) {
-        .split-container {
+        .container {
             flex-direction: column;
         }
 
-        .edit-section,
-        .card-section {
+        .left-side,
+        .right-side {
             width: 100%;
         }
-
-        .tinder--card img {
-            height: 25vh;
-        }
     }
+
+    /* ********************************* NavBar *************************************** */
 
     .navbar {
         position: fixed;
@@ -180,43 +391,93 @@
         }
     }
 
-    .tinder {
-        width: 100%;
-        max-width: 600px;
-        margin: 0 auto;
-        /* position: relative; */
-        /* min-height: 100vh; */
+    /* ********************************* Left-side *************************************** */
+    .left-side {
+        padding: 20px;
+        background-color: #f4f4f4;
         display: flex;
-        margin-top: 10%;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .interests,
+    .preferences {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .tag {
+        padding: 8px 12px;
+        background: #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .tag.active {
+        background: #ff6b6b;
+        color: white;
+    }
+
+    /* ********************************* Right-side *************************************** */
+    .image-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .main-image input {
+        width: 100%;
+    }
+
+    .small-images {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
     }
 
     .tinder--card {
         display: flex;
         flex-direction: column;
-        margin-top: 10vh;
-        margin-left: 20vh;
-        /* align-items: center; */
-        /* Met l'image en haut et le texte en bas */
         width: 90%;
         max-width: 400px;
         height: auto;
         background: #fff;
         border-radius: 8px;
         overflow: hidden;
-        will-change: transform;
-        /* transition: all 0.3s ease-in-out; */
-        cursor: grab;
-        /* transform: translateX(-50%); */
+        position: relative;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        /* Prevent default touch actions */
+        transition: all 0.3s ease-in-out;
+        cursor: grab;
         touch-action: none;
-        /* Prevent text selection during drag */
         user-select: none;
+        margin: 0 auto;
     }
 
     .tinder--card img {
         width: 100%;
         height: 35vh;
+        /* 35% de la hauteur de la carte */
         object-fit: cover;
     }
 
@@ -231,36 +492,99 @@
         margin: 5px 0;
     }
 
+    @media (max-width: 768px) {
+        .tinder--card img {
+            height: 40vh;
+            /* Augmente la taille de l'image sur mobile */
+        }
 
-    .tinder--buttons {
-        position: fixed;
-        bottom: 50px;
-        left: 0;
-        right: 0;
+        .tinder--card-content {
+            padding: 10px;
+        }
+
+        .tinder--card h3 {
+            font-size: 1.2em;
+            /* Ajuste la taille du texte sur mobile */
+        }
+
+        .tinder--card p {
+            font-size: 0.9em;
+            /* Réduit légèrement la taille des paragraphes */
+        }
+    }
+
+    /* ********************************* Image gestion *************************************** */
+    .photo-grid {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+
+    .photo-grid-small {
+        display: flex;
+        /* grid-template-columns: repeat(2, 1fr); */
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .photo-box {
+        width: 100px;
+        height: 100px;
+        border: 2px dashed #aaa;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+        transition: border-color 0.3s ease-in-out;
+    }
+
+    .photo-box.profile {
+        width: 120px;
+        height: 120px;
+        border-color: #ff6b6b;
+    }
+
+    /* Quand on fait glisser une image dessus */
+    .photo-box.drag-over {
+        border-color: #2ecc71;
+        background-color: rgba(46, 204, 113, 0.2);
+    }
+
+    .photo-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+    }
+
+    .placeholder {
+        font-size: 12px;
+        color: #777;
         text-align: center;
+        padding: 5px;
     }
 
-    .tinder--buttons button {
+    .photo-box .remove-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: red;
+        color: white;
+        border: none;
         border-radius: 50%;
-        line-height: 60px;
-        width: 60px;
-        border: 0;
-        margin: 0 10px;
-        font-size: 24px;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        display: none;
+        align-items: center;
+        justify-content: center;
     }
 
-    .tinder--card.moving {
-        /* Disable transition while dragging */
-        transition: none;
-    }
-
-    #nope {
-        background: #ff6b6b;
-        color: white;
-    }
-
-    #love {
-        background: #42b983;
-        color: white;
+    .photo-box:hover .remove-btn {
+        display: flex;
     }
 </style>

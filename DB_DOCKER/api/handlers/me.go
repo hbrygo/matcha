@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"matcha/database"
 	"net/http"
 )
@@ -36,6 +37,7 @@ func MeHandler(w http.ResponseWriter, r *http.Request) {
 	// decode request
 	var req MeRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		fmt.Printf("je suis ici\n")
 		http.Error(w, "Format JSON invalide", http.StatusBadRequest)
 		return
 	}
