@@ -35,12 +35,17 @@
 
                 <label>Interest</label>
                 <div class="interests" id="interests">
-                    <button type="button" class="tag" onclick="toggleInterest(this, 'Sports')">Sports</button>
-                    <button type="button" class="tag" onclick="toggleInterest(this, 'Reading')">Reading</button>
-                    <button type="button" class="tag" onclick="toggleInterest(this, 'Tattoo')">Tattoo</button>
-                    <button type="button" class="tag" onclick="toggleInterest(this, 'Vegan')">Vegan</button>
-                    <button type="button" class="tag" onclick="toggleInterest(this, 'Gaming')">Gaming</button>
-                    <button type="button" class="tag" onclick="toggleInterest(this, 'Traveling')">Traveling</button>
+                    <button type="button" class="tag" id="Sports"
+                        onclick="toggleInterest(this, 'Sports')">Sports</button>
+                    <button type="button" class="tag" id="Reading"
+                        onclick="toggleInterest(this, 'Reading')">Reading</button>
+                    <button type="button" class="tag" id="Tattoo"
+                        onclick="toggleInterest(this, 'Tattoo')">Tattoo</button>
+                    <button type="button" class="tag" id="Vegan" onclick="toggleInterest(this, 'Vegan')">Vegan</button>
+                    <button type="button" class="tag" id="Gaming"
+                        onclick="toggleInterest(this, 'Gaming')">Gaming</button>
+                    <button type="button" class="tag" id="Traveling"
+                        onclick="toggleInterest(this, 'Traveling')">Traveling</button>
                 </div>
 
                 <label for="gender">Gender</label>
@@ -114,6 +119,7 @@
                 </div>
             </div>
         </div>
+        <button type="submit" form="profile-form">Save</button>
     </div>
 </body>
 
@@ -178,10 +184,26 @@
     }
 
     function updateAll() {
+        console.log('updateAll');
         updateNameAge();
         document.getElementById('bioArea').dispatchEvent(new Event('input'));
         document.getElementById('interests').dispatchEvent(new Event('click'));
     }
+
+    function setInterest(interest) {
+        const interests = document.getElementById('interest');
+        interest.forEach(i => {
+            const tag = document.getElementById(i);
+            if (tag) {
+                tag.classList.add('active');
+            }
+        });
+    }
+
+    // function setNameAge(firstName, lastName, age) {
+    //     // console.log(firstName, lastName, age);
+    //     nameAge.innerText = firstName + ' ' + lastName + ', ' + age;
+    // }
 
     /*********************************** Gestion des images ****************************************/
 
@@ -251,6 +273,21 @@
             displayImage(file, document.getElementById(boxId));
         }
     }
+
+    function setImages(images) {
+        images.forEach((image, index) => {
+            if (index === 0) {
+                document.querySelector('.tinder--card img').src = image;
+                const box = document.getElementById('profile-box');
+                box.innerHTML = `<img src="${image}" alt="Uploaded Image">
+                <button class="remove-btn" onclick="removeImage('${box.id}')">&times;</button>`;
+            } else {
+                const box = document.getElementById(`box${index}`);
+                box.innerHTML = `<img src="${image}" alt="Uploaded Image">
+                <button class="remove-btn" onclick="removeImage('${box.id}')">&times;</button>`;
+            }
+        });
+    }
     /* ********************************* Fetch *************************************** */
 
     function getCookie(name) {
@@ -273,12 +310,13 @@
                 document.getElementById('first-name').value = data.user.nom;
                 document.getElementById('last-name').value = data.user.prenom;
                 setAge(data.user.dob);
-                // setInterest(data.user.interest);
+                setInterest(data.user.interests);
                 document.getElementById('gender').value = data.user.gender;
                 setPreference(data.user.preference);
                 document.getElementById('bioArea').value = data.user.bio;
-                // setImages(data.user.images);
                 updateAll();
+                setImages(data.user.pictures);
+                // setNameAge(data.user.nom, data.user.prenom, data.user.age);
             });
     });
 

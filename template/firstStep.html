@@ -184,9 +184,27 @@
             console.log(formData.gender);
         } else if (step === 4) {
             formData.preference = document.getElementById("preference").value;
+            // } else if (step === 5) {
+            //     formData.interest = formData.interest.filter(i => document.getElementById(i).classList.contains("active"));
+        } else if (step === 6) {
+            const boxes = document.querySelectorAll(".photo-box img");
+            formData.photos = Array.from(boxes).map(box => box.src);
         } else if (step === 7) {
             formData.bio = document.getElementById("bio").value;
         }
+    }
+
+    function restorePhotos() {
+        formData.photos.forEach((photo, index) => {
+            if (index == 0)
+                document.getElementById("profile-box").innerHTML = `<img src="${photo}" alt="Uploaded Image">
+                     <button class="remove-btn" onclick="removeImage('profile-box')">&times;</button>`;
+            else {
+                const box = document.getElementById(`box${index}`);
+                box.innerHTML = `<img src="${photo}" alt="Uploaded Image">
+                <button class="remove-btn" onclick="removeImage('${box.id}')">&times;</button>`;
+            }
+        });
     }
 
     function restoreData(step) {
@@ -206,6 +224,7 @@
             });
         } else if (step === 6) {
             console.log(formData.photos);
+            restorePhotos();
             // document.getElementById("photos").value = formData.photos;
         } else if (step === 7) {
             document.getElementById("bio").value = formData.bio;
@@ -331,7 +350,7 @@
     }
 
     // Modify displayImage function
-    async function displayImage(file, box) {
+    function displayImage(file, box) {
         const reader = new FileReader();
         reader.onload = function (e) {
             box.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">
@@ -340,14 +359,20 @@
         reader.readAsDataURL(file);
 
         // Convert to base64 and store
-        const base64 = await fileToBase64(file);
-        formData.photos.push(base64);
+        // const base64 = await fileToBase64(file);
+        // formData.photos.push(base64);
     }
 
     function removeImage(boxId) {
+        console.log(boxId);
         const box = document.getElementById(boxId);
         box.innerHTML = `<span class="placeholder">Drop or Click</span>`;
-        formData.photos = formData.photos.filter(p => p.name !== boxId);
+        // retire la photo du tableau
+        // let imageToRemove = document.getElementById(boxId);
+        // console.log(imageToRemove.innerHTML);
+        // imageToRemove = await fileToBase64(imageToRemove);
+        // formData.photos = formData.photos.filter(photo => photo !== imageToRemove);
+        // console.log(formData.photos);
     }
 
     /* Drag & Drop */

@@ -15,8 +15,8 @@ type UpdateRequest struct {
 	DOB        string   `json:"dob"`
 	Gender     string   `json:"gender"`
 	Preference string   `json:"preference"`
-	Interests  []string `json:"interests"`
-	Pictures   []string `json:"pictures"`
+	Interests  []string `json:"interest"`
+	Pictures   []string `json:"photos"`
 	Bio        string   `json:"bio"`
 }
 
@@ -133,6 +133,12 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 			return
 		}
+	}
+
+	_, err = tx.Exec("UPDATE users SET first_step = TRUE WHERE uid = ?", req.UID)
+	if err != nil {
+		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
+		return
 	}
 
 	// validate transactions

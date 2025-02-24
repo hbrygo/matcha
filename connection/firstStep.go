@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"matcha/cookieGestion"
 	"net/http"
 	"strconv"
@@ -63,6 +62,7 @@ func SetData(w http.ResponseWriter, r *http.Request) {
 	// fmt.Printf("req: %v\n", dbReq)
 	postBody, _ := json.Marshal(dbReq)
 	responseBody := bytes.NewBuffer(postBody)
+	// fmt.Printf("postBody: %s\n", postBody)
 
 	// send data to database
 	resp, err := http.Post("http://localhost:8181/update", "application/json", responseBody)
@@ -73,13 +73,13 @@ func SetData(w http.ResponseWriter, r *http.Request) {
 	defer resp.Body.Close()
 
 	// Read the response body
-	responseData, err := io.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Printf("An Error Occured %v", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-	}
+	// responseData, err := io.ReadAll(resp.Body)
+	// if err != nil {
+	// 	fmt.Printf("An Error Occured %v", err)
+	// 	http.Error(w, "Internal server error", http.StatusInternalServerError)
+	// }
 
-	fmt.Printf("Response: %s\n", responseData)
+	// fmt.Printf("Response: %s\n", responseData)
 	var response map[string]interface{}
 	if resp.StatusCode == 200 {
 		cookieGestion.SetCookie(w, "1", "firstStep")
