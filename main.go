@@ -78,7 +78,7 @@ func getMe(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	// fmt.Printf("Response: %s\n", body)
 	// Définir le type de contenu de la réponse
 	w.Header().Set("Content-Type", "application/json")
 

@@ -36,7 +36,6 @@ func SetData(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid UID format", http.StatusBadRequest)
 		return
 	}
-
 	dbReq := struct {
 		Uid        int      `json:"uid"`
 		FirstName  string   `json:"firstName"`

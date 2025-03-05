@@ -12,11 +12,27 @@
 </head>
 
 <body>
-    <nav class="navbar">
+    <!-- <nav class="navbar">
         <div class="navbar-brand">
             <a href="/" class="logo">Matcha</a>
         </div>
         <ul class="navbar-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/chat">Messages</a></li>
+            <li><a href="/settings">Settings</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav> -->
+
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="/" class="logo">Matcha</a>
+            <button class="navbar-toggler" onclick="toggleMenu()">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        <ul class="navbar-menu" id="navbarMenu">
             <li><a href="/">Home</a></li>
             <li><a href="/profile">Profile</a></li>
             <li><a href="/chat">Messages</a></li>
@@ -171,10 +187,14 @@
             }, 300);
         }
     });
+
+    function toggleMenu() {
+        document.getElementById("navbarMenu").classList.toggle("show");
+    }
 </script>
 
 <style>
-    .navbar {
+    /* .navbar {
         position: fixed;
         top: 0;
         left: 0;
@@ -193,6 +213,68 @@
         font-weight: bold;
         color: #ff6b6b;
         text-decoration: none;
+    }
+    
+    .navbar-menu {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .navbar-menu li {
+        margin: 0 1rem;
+    }
+
+    .navbar-menu a {
+        color: #333;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .navbar-menu a:hover {
+        color: #ff6b6b;
+    }
+    
+    @media (max-width: 768px) {
+        .navbar-menu {
+            display: none;
+        }
+    } */
+
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+    }
+
+    .navbar-brand .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ff6b6b;
+        text-decoration: none;
+    }
+
+    .navbar-toggler {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        display: none;
     }
 
     .navbar-menu {
@@ -217,11 +299,34 @@
         color: #ff6b6b;
     }
 
+    /* Responsive */
     @media (max-width: 768px) {
+        .navbar-toggler {
+            display: block;
+        }
+
         .navbar-menu {
             display: none;
+            flex-direction: column;
+            width: 100%;
+            background: white;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+        }
+
+        .navbar-menu.show {
+            display: flex;
+        }
+
+        .navbar-menu li {
+            text-align: center;
+            margin: 10px 0;
         }
     }
+
 
     .tinder {
         width: 100%;
