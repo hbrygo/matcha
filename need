@@ -1,3 +1,5 @@
+<!-- *********************************************** ancien *********************************************** -->
+
 ############################################################################
 Pour créer un nouvel utilisateur via l'API, voici les spécifications :
 ############################################################################
@@ -247,6 +249,228 @@ Renvoie absolument toute les infos sauf Mdp et donnees sensible
 
 
 
+<!-- *********************************************** nouvea ici *********************************************** -->
+
+
+<!-- ATTENTION -->
+Tu prefere quoi ?
+1) Si la chatRoom n'existe pas, il faut la creer
+2) Creer la chatRoom lors du match des 2 Users
+3) Faire un Endpoint create_chatroom
+4) ... <!-- dit moi si tu as d'autre idee -->
+
+Est-ce que tu cree l'id de la chatRoom toi meme ou je le fais ?
+
+
+#########################################################################################
+Pour ajouter un message dans la db pour une chat room specifique via l'API, voici les spécifications :
+#########################################################################################
+
+Endpoint : POST http://localhost:8181/new_message
+
+Par UID :
+{
+    "message": "exemple de message"
+    "chatRoom": id de la chat room
+    "userID": id de celui qui envoie le message
+}
+
+
+Exemples de requêtes curl :
+
+Recherche par UID :
+curl -X POST http://localhost:8181/new_message \
+     -H "Content-Type: application/json" \
+     -d '{
+            "message": "exemple de message"
+            "chatRoom": id de la chat room
+            "userID": id de celui qui envoie le message
+         }'
+
+200 : message ajoute correctement
+400 : Données manquantes ou format incorrect
+404 : Utilisateur non trouvé -> a definir peut etre 401
+500 : Erreur serveur
+<!-- ajouter les erreurs si user/message/chatroom existe pas, je te laisse voir pour les codes-->
+⚠️ Notes importantes :
+
+Vous devez fournir le userID, le message et l'id de la chatroom
+La reponse est: 200 ok ou erreur
+Les champs fournis ne doivent pas être vides
+Utilisez de préférence une connexion sécurisée (HTTPS) pour transmettre les données d'authentification
+
+#########################################################################################
+Pour recevoir les message d'une chat room specifique via l'API, voici les spécifications :
+#########################################################################################
+
+Endpoint : POST http://localhost:8181/get_message
+
+Par UID :
+{
+    "chatRoom": id de la chat room
+    "userID": id de celui qui envoie le message
+}
+
+
+Exemples de requêtes curl :
+
+Recherche par UID :
+curl -X POST http://localhost:8181/get_message \
+     -H "Content-Type: application/json" \
+     -d '{
+            "chatRoom": id de la chat room
+            "userID": id de celui qui envoie le message
+         }'
+
+200 : Ok, avec les donnees suivante:
+{
+    []"messages": { // tableau
+        "userID": "UserID",
+        "message": "Exemple de message"
+    }
+}
+400 : Données manquantes ou format incorrect
+404 : Utilisateur non trouvé -> a definir peut etre 401
+500 : Erreur serveur
+<!-- ajouter les erreurs si user/chatroom/mauvaisUser existe pas, je te laisse voir pour les codes-->
+⚠️ Notes importantes :
+
+Vous devez fournir le userID et l'id de la chatroom
+La reponse est: 200 ok ou erreur
+Les champs fournis ne doivent pas être vides
+Utilisez de préférence une connexion sécurisée (HTTPS) pour transmettre les données d'authentification
+erreur possible: Si le userID n'est pas dans la chatroom, ne pas renvoyer les messages et renvoyer une erreur
+
+#########################################################################################
+Pour récupérer les informations d'un utilisateur via l'API, voici les spécifications :
+#########################################################################################
+
+Endpoint : POST http://localhost:8181/get_user_by_username
+
+Exemples de requêtes curl :
+
+Recherche par UID :
+curl -X POST http://localhost:8181/get_user_by_username \
+     -H "Content-Type: application/json" \
+     -d '{
+           "username": username
+         }'
+
+200 : Utilisateur trouvé, avec les données suivantes :
+{
+    "user": {
+        "nom": "Test",
+        "prenom": "User",
+        "dob": "dob", // date of birth
+        "gender": "gender",
+        "preference": "preference",
+        "interests": []"interests" // tableau
+        "picture": []"picture" //tableau et ca peut encore changer en fonction de comment est stocker l'image
+        "bio": "bio"
+    }
+}
+
+200 : Utilisateur trouvé (avec ses informations)
+400 : Données manquantes ou format incorrect
+404 : Utilisateur non trouvé -> a definir peut etre 401
+500 : Erreur serveur
+⚠️ Notes importantes :
+
+Vous devez fournir l'uid
+Les informations sensibles (mot de passe) ne sont pas incluses dans la réponse
+Les champs fournis ne doivent pas être vides
+Utilisez de préférence une connexion sécurisée (HTTPS) pour transmettre les données d'authentification
+Renvoie toutes les infos dont j'ai besoin pour presenter le profile a une autre personne
+
+#########################################################################################
+Pour recevoir toutes les chatRooms qui me corresponde via l'API, voici les spécifications :
+#########################################################################################
+
+Endpoint : POST http://localhost:8181/get_my_chatroom
+
+Exemples de requêtes curl :
+
+Recherche par UID :
+curl -X POST http://localhost:8181/get_my_chatroom \
+     -H "Content-Type: application/json" \
+     -d '{
+           "userID": "id du user"
+         }'
+
+200 : Utilisateur trouvé, avec les données suivantes :
+{
+    "user": {
+        "chatRoomID": []"chatRoomID" // tableau
+    }
+}
+
+400 : Données manquantes ou format incorrect
+404 : Utilisateur non trouvé -> a definir peut etre 401
+500 : Erreur serveur
+⚠️ Notes importantes :
+
+Vous devez fournir l'id du User
+Les champs fournis ne doivent pas être vides
+Utilisez de préférence une connexion sécurisée (HTTPS) pour transmettre les données d'authentification
+Renvoie tous les chatsRoomID du User
+
+#########################################################################################
+Pour recevoir toutes les chatRooms qui me corresponde via l'API, voici les spécifications :
+#########################################################################################
+
+<!-- Cette fonction sert a creer de nouvelle chatRoom afin de ne pas utiliser le meme id qu'une autre -->
+
+Endpoint : GET http://localhost:8181/get_all_chatroom
+
+Exemples de requêtes curl :
+
+Recherche par UID :
+curl -X GET http://localhost:8181/get_all_chatroom \
+     -H "Content-Type: application/json" \
+
+200 : Utilisateur trouvé, avec les données suivantes :
+{
+    "chatRoom": {
+        "chatRoomID": []"chatRoomID" // tableau
+    }
+}
+
+400 : Données manquantes ou format incorrect
+404 : Utilisateur non trouvé -> a definir peut etre 401
+500 : Erreur serveur
+⚠️ Notes importantes :
+
+Vous devez fournir l'id du User
+Les champs fournis ne doivent pas être vides
+Utilisez de préférence une connexion sécurisée (HTTPS) pour transmettre les données d'authentification
+Renvoie toutes les chatsRoomID
+
+#########################################################################################
+Pour changer le password via l'API, voici les spécifications :
+#########################################################################################
+
+Endpoint : POST http://localhost:8181/change_password
+
+Exemples de requêtes curl :
+
+Recherche par UID :
+curl -X POST http://localhost:8181/change_password \
+     -H "Content-Type: application/json" \
+     -d '{
+        "oldPassword": "oldPassword",
+        "newPassword": "newPassword"
+     }'
+
+200 : Mot de passe change avec succes
+400 : Données manquantes ou format incorrect
+404 : Utilisateur non trouvé -> a definir peut etre 401
+500 : Erreur serveur
+⚠️ Notes importantes :
+
+Vous devez fournir l'id du User
+Les champs fournis ne doivent pas être vides
+Utilisez de préférence une connexion sécurisée (HTTPS) pour transmettre les données d'authentification
+Renvoie le code adequat
 
 
 
