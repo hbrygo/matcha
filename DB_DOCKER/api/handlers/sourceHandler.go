@@ -2,14 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"matcha/api/models"
 	"net/http"
 )
-
-// structure of response
-type Response struct {
-	Status  string `json:"status"`
-	Message string `json:"message"`
-}
 
 // handler for root
 func RootHandler(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +13,7 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := Response{
+	response := models.Response{
 		Status:  "success",
 		Message: "API Matcha en ligne. Utilisez /testDBavailability pour tester la base de données.",
 	}

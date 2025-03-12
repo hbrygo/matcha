@@ -473,8 +473,279 @@ Utilisez de préférence une connexion sécurisée (HTTPS) pour transmettre les 
 Renvoie le code adequat
 
 
+/*
+
+fonctions mise en place pour les chatroooms
+
+*/
 
 
+* /create_chatroom : cree une chatroom et te renvoi son id 
+* /add_user_to_chatroom : ajoute un user a une room
+* /remove_user_from_chatroom : retire un user de une room
+* 
+
+
+/************************ *********/
+    doc de la nouvelle fonctions  
+/***********************************/
+
+/*
+/************************************************** */
+/create_chatroom
+Description: Crée une nouvelle chatroom et ajoute les utilisateurs spécifiés.
+Entrée:
+{
+  "user_ids": [1, 2],         // tableau d'IDs utilisateurs
+  "name": "Chat Name",        // nom de la chatroom (optionnel)
+}
+Réponse (succès - 200):
+{
+  "status": "success",
+  "chatroom_id": 5,           // id de la chatroom créée
+  "message": "Chatroom created successfully"
+}
+Erreurs:
+
+400: Format JSON invalide / Paramètres manquants
+404: Utilisateurs non trouvés
+500: Erreur serveur
+
+/************************************************** */
+/add_user_to_chatroom
+Description: Ajoute un utilisateur à une chatroom existante.
+entree 
+{
+  "chatroom_id": 5,           // id de la chatroom
+  "user_id": 3                // id de l'utilisateur à ajouter
+}
+
+Réponse (succès - 200):
+
+{
+  "status": "success",
+  "message": "User added to chatroom successfully"
+}
+
+Erreurs:
+
+400: Format JSON invalide / Utilisateur déjà dans la chatroom
+404: Utilisateur ou chatroom non trouvés
+500: Erreur serveur
+
+/*************************************************** */
+/remove_user_from_chatroom
+Description: Retire un utilisateur d'une chatroom.
+
+Entrée:
+{
+  "chatroom_id": 5,           // id de la chatroom
+  "user_id": 3                // id de l'utilisateur à retirer
+}
+
+Réponse (succès - 200):
+{
+  "status": "success",
+  "message": "User removed from chatroom successfully"
+}
+
+Erreurs:
+
+400: Format JSON invalide / Utilisateur pas dans la chatroom
+404: Chatroom non trouvée
+500: Erreur serveur
+
+/*************************************************** */
+/************************************************** */
+/new_message
+Description: Ajoute un nouveau message dans une chatroom spécifique.
+
+Entrée:
+{
+  "message": "Hello world!",      // contenu du message
+  "chatRoom": 5,                  // id de la chatroom
+  "userID": 3                     // id de l'utilisateur qui envoie
+}
+
+Réponse (succès - 200):
+{
+  "status": "success",
+  "message": "Message added successfully"
+}
+
+Erreurs:
+400: Format JSON invalide / Message vide
+404: Utilisateur ou chatroom non trouvés
+403: Utilisateur non membre de la chatroom
+500: Erreur serveur
+/************************************************** */
+/************************************************** */
+/get_message
+Description: Récupère tous les messages d'une chatroom spécifique.
+
+Entrée:
+{
+  "chatRoom": 5,                  // id de la chatroom
+  "userID": 3                     // id de l'utilisateur qui fait la requête
+}
+
+Réponse (succès - 200):
+{
+  "status": "success",
+  "messages": [
+    {
+      "userID": 1,
+      "message": "Hello world!",
+      "createdAt": "2023-05-20 14:23:36"
+    },
+    {
+      "userID": 2,
+      "message": "Bonjour!",
+      "createdAt": "2023-05-20 14:24:01"
+    }
+  ]
+}
+
+Erreurs:
+400: Format JSON invalide / Paramètres invalides
+404: Utilisateur ou chatroom non trouvés
+403: Utilisateur non membre de la chatroom
+500: Erreur serveur
+/************************************************** */
+/*************************************************** */
+/*************************************************** */
+/get_user_by_username
+Description: Récupère les informations complètes d'un utilisateur à partir de son nom d'utilisateur.
+
+Entrée:
+{
+  "username": "user123"      // nom d'utilisateur recherché
+}
+
+Réponse (succès - 200):
+{
+  "user": {
+    "nom": "Dupont",
+    "prenom": "Jean",
+    "dob": "1990-01-01",            // date de naissance
+    "gender": "homme",              // genre de l'utilisateur
+    "preference": "femme",          // préférence de genre 
+    "interests": [                  // tableau des centres d'intérêt
+      "sport",
+      "musique",
+      "voyage"
+    ],
+    "pictures": [                   // tableau des chemins vers les photos
+      "/uploads/user123/profile.jpg",
+      "/uploads/user123/photo2.jpg"
+    ],
+    "bio": "Passionné de voyages et de nouvelles rencontres."
+  }
+}
+
+Erreurs:
+400: Format JSON invalide / Nom d'utilisateur manquant
+404: Utilisateur non trouvé
+405: Méthode non autorisée (seule la méthode POST est acceptée)
+500: Erreur serveur
+/*************************************************** */
+/*************************************************** */
+/*************************************************** */
+/get_my_chatroom
+Description: Récupère toutes les chatrooms auxquelles un utilisateur participe.
+
+Entrée:
+{
+  "userID": 3                     // ID de l'utilisateur qui fait la requête
+}
+
+Réponse (succès - 200):
+{
+  "user": {
+    "chatRoomID": [1, 5, 9]       // tableau des IDs de chatrooms
+  }
+}
+
+Erreurs:
+400: Format JSON invalide / ID utilisateur invalide
+404: Utilisateur non trouvé
+405: Méthode non autorisée (seule la méthode POST est acceptée)
+500: Erreur serveur
+/************************************************** */
+/*************************************************** */
+/*************************************************** */
+/*************************************************** */
+/get_all_chatroom
+Description: Récupère toutes les chatrooms existantes dans le système.
+
+Cette fonction ne nécessite aucun paramètre d'entrée et renvoie un tableau 
+de tous les IDs de chatrooms existantes. Elle est particulièrement utile lors 
+de la création de nouvelles chatrooms pour éviter les conflits d'ID.
+
+Méthode: GET
+Endpoint: http://localhost:8181/get_all_chatroom
+
+Entrée:
+Aucun paramètre requis
+
+Réponse (succès - 200):
+{
+  "chatRoom": {
+    "chatRoomID": [1, 2, 3, 5, 8]  // tableau des IDs de toutes les chatrooms
+  }
+}
+
+Erreurs:
+405: Méthode non autorisée (seule la méthode GET est acceptée)
+500: Erreur serveur
+
+⚠️ Notes importantes:
+- Cette fonction renvoie TOUTES les chatrooms existantes, pas seulement celles d'un utilisateur spécifique
+- Pour obtenir uniquement les chatrooms d'un utilisateur spécifique, utilisez plutôt l'endpoint /get_my_chatroom
+- Utilisez de préférence une connexion sécurisée (HTTPS) pour toutes les communications avec l'API
+/*************************************************** */
+/*************************************************** */
+/change_password
+Description: Change le mot de passe d'un utilisateur après vérification de l'ancien mot de passe.
+
+Cette fonction permet à un utilisateur de changer son mot de passe de manière sécurisée.
+Le système vérifie d'abord que l'ancien mot de passe est correct avant d'accepter la modification.
+
+Entrée:
+{
+  "userID": 3,                     // ID de l'utilisateur
+  "oldPassword": "Ancien123",      // Ancien mot de passe
+  "newPassword": "Nouveau456"      // Nouveau mot de passe
+}
+
+Réponse (succès - 200):
+{
+  "status": "success",
+  "message": "Password changed successfully"
+}
+
+Erreurs:
+400: Format JSON invalide / Données manquantes / Nouveau mot de passe trop faible
+401: Ancien mot de passe incorrect
+404: Utilisateur non trouvé
+405: Méthode non autorisée (seule la méthode POST est acceptée)
+500: Erreur serveur
+
+⚠️ Notes importantes:
+- L'identifiant de l'utilisateur (userID) doit être fourni
+- L'ancien mot de passe doit correspondre exactement à celui stocké en base
+- Le nouveau mot de passe doit comporter au moins 8 caractères
+- Pour des raisons de sécurité, utilisez toujours HTTPS pour ces requêtes
+/************************************************** */
+/*************************************************** */
+
+
+/*************************************************** */
+
+
+/*************************************************** */
+
+*/
 
 
 

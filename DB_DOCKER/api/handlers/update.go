@@ -4,27 +4,10 @@ import (
 	//"database/sql"
 	"encoding/json"
 	"fmt"
+	"matcha/api/models"
 	"matcha/database"
 	"net/http"
 )
-
-type UpdateRequest struct {
-	UID        int      `json:"uid"`
-	Nom        string   `json:"lastName"`
-	Prenom     string   `json:"firstName"`
-	DOB        string   `json:"dob"`
-	Gender     string   `json:"gender"`
-	Preference string   `json:"preference"`
-	Interests  []string `json:"interest"`
-	Pictures   []string `json:"photos"`
-	Bio        string   `json:"bio"`
-}
-
-type UpdateResponse struct {
-	Status  string         `json:"status"`
-	Message string         `json:"message"`
-	User    *UpdateRequest `json:"user,omitempty"`
-}
 
 func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -33,7 +16,7 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req UpdateRequest
+	var req models.UpdateRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Format JSON invalide", http.StatusBadRequest)
 		return
@@ -148,7 +131,7 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// prepare rep
-	response := UpdateResponse{
+	response := models.UpdateResponse{
 		Status:  "success",
 		Message: "Informations mises à jour avec succès",
 		User:    &req,

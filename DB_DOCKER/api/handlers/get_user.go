@@ -3,28 +3,10 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"matcha/api/models"
 	"matcha/database"
 	"net/http"
 )
-
-// Request structure to get user
-type GetUserRequest struct {
-	UID int `json:"uid"`
-}
-
-// Response structure
-type GetUserResponse struct {
-	User struct {
-		Nom        string   `json:"nom"`
-		Prenom     string   `json:"prenom"`
-		DOB        string   `json:"dob"`
-		Gender     string   `json:"gender"`
-		Preference string   `json:"preference"`
-		Interests  []string `json:"interests"`
-		Pictures   []string `json:"pictures"`
-		Bio        string   `json:"bio"`
-	} `json:"user"`
-}
 
 func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -34,7 +16,7 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// decode request
-	var req GetUserRequest
+	var req models.GetUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
 		return
@@ -55,7 +37,7 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	// prepare rseponse
-	var response GetUserResponse
+	var response models.GetUserResponse
 
 	err = db.QueryRow(`
     SELECT 

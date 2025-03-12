@@ -9,7 +9,8 @@ import (
 
 const dbPath = "./data/users.db"
 
-func InitDB() (*sql.DB, error) {
+// func InitDB() (*sql.DB, error) {
+var InitDB = func() (*sql.DB, error) {
 	// verify is folder exists
 	if _, err := os.Stat("./data"); os.IsNotExist(err) {
 		err := os.MkdirAll("./data", 0755)

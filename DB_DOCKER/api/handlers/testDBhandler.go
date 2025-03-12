@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"matcha/api/models"
 	"matcha/database"
 	"net/http"
 )
@@ -16,7 +17,7 @@ func TestDBHandler(w http.ResponseWriter, r *http.Request) {
 
 	db, err := database.InitDB()
 	if err != nil {
-		response := Response{
+		response := models.Response{
 			Status:  "error",
 			Message: "Erreur lors de l'initialisation de la base de données: " + err.Error(),
 		}
@@ -30,7 +31,7 @@ func TestDBHandler(w http.ResponseWriter, r *http.Request) {
 	// Vérifier si la connexion à la DB est active
 	err = db.Ping()
 	if err != nil {
-		response := Response{
+		response := models.Response{
 			Status:  "error",
 			Message: "La base de données n'est pas accessible: " + err.Error(),
 		}
@@ -41,7 +42,7 @@ func TestDBHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Si tout va bien
-	response := Response{
+	response := models.Response{
 		Status:  "success",
 		Message: "Base de données opérationnelle et prête à l'emploi",
 	}

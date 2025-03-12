@@ -4,28 +4,10 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"matcha/api/models"
 	"matcha/database"
 	"net/http"
 )
-
-type MeRequest struct {
-	UID int `json:"uid"`
-}
-
-type MeResponse struct {
-	User struct {
-		Username   string   `json:"username"`
-		Email      string   `json:"email"`
-		Nom        string   `json:"nom"`
-		Prenom     string   `json:"prenom"`
-		DOB        string   `json:"dob"`
-		Gender     string   `json:"gender"`
-		Preference string   `json:"preference"`
-		Interests  []string `json:"interests"`
-		Pictures   []string `json:"pictures"`
-		Bio        string   `json:"bio"`
-	} `json:"user"`
-}
 
 func MeHandler(w http.ResponseWriter, r *http.Request) {
 	// verify http method
@@ -35,7 +17,7 @@ func MeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// decode request
-	var req MeRequest
+	var req models.MeRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		fmt.Printf("je suis ici\n")
 		http.Error(w, "Format JSON invalide", http.StatusBadRequest)
@@ -57,7 +39,7 @@ func MeHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	// create reponse
-	var response MeResponse
+	var response models.MeResponse
 
 	// get db info
 	err = db.QueryRow(`

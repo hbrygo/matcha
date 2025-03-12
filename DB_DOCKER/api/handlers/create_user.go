@@ -9,21 +9,8 @@ import (
 	"regexp"
 
 	"golang.org/x/crypto/bcrypt"
+	"matcha/api/models"
 )
-
-// CreateUserRequest defines the expected request structure
-type CreateUserRequest struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-// CreateUserResponse defines the API response structure
-type CreateUserResponse struct {
-	User struct {
-		UID int `json:"uid"`
-	} `json:"user"`
-}
 
 // validatePassword checks for password strength requirements
 func validatePassword(password string) bool {
@@ -75,7 +62,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Decode request body
-	var req CreateUserRequest
+	var req models.CreateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
 		return
@@ -158,7 +145,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Prepare and send response
-	response := CreateUserResponse{}
+	response := models.CreateUserResponse{}
 	response.User.UID = int(uid)
 
 	w.Header().Set("Content-Type", "application/json")

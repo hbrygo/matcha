@@ -19,25 +19,9 @@ func Router(mux *http.ServeMux) http.Handler {
 
 		switch r.URL.Path {
 		case "/":
-
-			/*
-				w.Header().Set("Cache-Control", "no-cache")
-				if r.Method != http.MethodGet {
-					http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
-					return
-				}*/
 			handlers.RootHandler(w, r)
-
 		case "/testDBavailability":
-			// Headers spécifiques pour le test DB
-			/*
-				w.Header().Set("Cache-Control", "no-store")
-				if r.Method != http.MethodGet {
-					http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
-					return
-				}*/
 			handlers.TestDBHandler(w, r)
-
 		case "/update":
 			handlers.UpdateHandler(w, r)
 		case "/me":
@@ -46,10 +30,29 @@ func Router(mux *http.ServeMux) http.Handler {
 			handlers.LoginHandler(w, r)
 		case "/get_user":
 			handlers.GetUserHandler(w, r)
-
 		case "/create_user":
 			handlers.CreateUserHandler(w, r)
-
+		// in the Router function, add this case:
+		case "/create_chatroom":
+			handlers.CreateChatroomHandler(w, r)
+			// Dans router.go, ajoutez ces cases dans la fonction switch
+		case "/add_user_to_chatroom":
+			handlers.AddUserToChatroomHandler(w, r)
+		case "/remove_user_from_chatroom":
+			handlers.RemoveUserFromChatroomHandler(w, r)
+			// Dans router.go, ajoutez cette case
+		case "/new_message":
+			handlers.NewMessageHandler(w, r)
+		case "/get_message":
+			handlers.GetMessageHandler(w, r)
+		case "/get_user_by_username":
+			handlers.GetUserByUsernameHandler(w, r)
+		case "/get_my_chatroom":
+			handlers.GetMyChatroomHandler(w, r)
+		case "/get_all_chatroom":
+			handlers.GetAllChatroomHandler(w, r)
+		case "/change_password":
+			handlers.ChangePasswordHandler(w, r)
 		default:
 			http.NotFound(w, r)
 		}

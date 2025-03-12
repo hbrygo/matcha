@@ -7,20 +7,8 @@ import (
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
+	"matcha/api/models"
 )
-
-type LoginRequest struct {
-	Email    string `json:"email,omitempty"`
-	Username string `json:"username,omitempty"`
-	Password string `json:"password"`
-}
-
-type LoginResponse struct {
-	User struct {
-		UID       int  `json:"uid"`
-		FirstStep bool `json:"first_step"`
-	} `json:"user"`
-}
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// verifiy method
@@ -30,7 +18,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// decode request
-	var req LoginRequest
+	var req models.LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Format JSON invalide", http.StatusBadRequest)
 		return
@@ -80,7 +68,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// prepare resp
-	response := LoginResponse{}
+	response := models.LoginResponse{}
 	response.User.UID = uid
 	response.User.FirstStep = firstStep
 

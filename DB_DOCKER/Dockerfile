@@ -1,4 +1,4 @@
-# go 1.24 
+# go 1.24
 FROM golang:1.24-alpine
 
 # necessary packages
@@ -12,7 +12,7 @@ RUN apk add --no-cache \
 # working directory
 WORKDIR /app
 
-# Copy files 
+# Copy files
 COPY go.mod go.sum ./
 COPY . .
 
@@ -22,7 +22,7 @@ RUN go mod download
 # creation DB folder
 RUN mkdir -p /app/data
 
-# construction of app 
+# construction of app
 RUN CGO_ENABLED=1 go build -o main .
 
 # port 8181
