@@ -32,15 +32,12 @@ func Router(mux *http.ServeMux) http.Handler {
 			handlers.GetUserHandler(w, r)
 		case "/create_user":
 			handlers.CreateUserHandler(w, r)
-		// in the Router function, add this case:
 		case "/create_chatroom":
 			handlers.CreateChatroomHandler(w, r)
-			// Dans router.go, ajoutez ces cases dans la fonction switch
 		case "/add_user_to_chatroom":
 			handlers.AddUserToChatroomHandler(w, r)
 		case "/remove_user_from_chatroom":
 			handlers.RemoveUserFromChatroomHandler(w, r)
-			// Dans router.go, ajoutez cette case
 		case "/new_message":
 			handlers.NewMessageHandler(w, r)
 		case "/get_message":
