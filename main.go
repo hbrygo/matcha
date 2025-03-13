@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"matcha/chatRoom"
 	"matcha/connection"
 	"matcha/cookieGestion"
 	"net/http"
@@ -97,6 +98,10 @@ func main() {
 	http.HandleFunc("POST /register", connection.Register)
 	http.HandleFunc("POST /login", connection.Login)
 	http.HandleFunc("POST /setData", connection.SetData)
+	http.HandleFunc("POST /getMyChatRoom", chatRoom.GetMyChatRoom)
+	http.HandleFunc("POST /getChatRoom", chatRoom.GetMessage)
+	http.HandleFunc("POST /sendMessage", chatRoom.NewMessage)
+	http.HandleFunc("POST /createChatRoom", chatRoom.NewChatRoom)
 	http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("images"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("js"))))
