@@ -738,6 +738,35 @@ Erreurs:
 - Pour des raisons de sécurité, utilisez toujours HTTPS pour ces requêtes
 /************************************************** */
 /*************************************************** */
+/*************************************************** */
+/*************************************************** */
+/get_chatroom_participants
+Description: Récupère tous les identifiants des utilisateurs participant à une chatroom.
+
+Cette fonction permet d'obtenir la liste complète des participants (userIDs) 
+d'une chatroom spécifiée par son identifiant.
+
+Entrée:
+{
+  "chatRoomID": 5                  // ID de la chatroom
+}
+
+Réponse (succès - 200):
+{
+  "participants": [1, 2, 3, 5]     // Tableau des IDs d'utilisateurs participants
+}
+
+Erreurs:
+400: Format JSON invalide / ID de chatroom manquant ou invalide
+404: Chatroom non trouvée
+405: Méthode non autorisée (seule la méthode POST est acceptée)
+500: Erreur serveur
+
+⚠️ Notes importantes:
+- L'identifiant de la chatroom doit être positif
+- La réponse inclut tous les utilisateurs actuellement membres de la chatroom
+- Utilisez de préférence une connexion sécurisée (HTTPS) pour ces requêtes
+/************************************************** */
 
 
 /*************************************************** */
