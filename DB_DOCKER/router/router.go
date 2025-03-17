@@ -50,6 +50,8 @@ func Router(mux *http.ServeMux) http.Handler {
 			handlers.GetAllChatroomHandler(w, r)
 		case "/change_password":
 			handlers.ChangePasswordHandler(w, r)
+		case "/get_chatroom_participants":
+			handlers.GetChatroomParticipantsHandler(w, r)
 		default:
 			http.NotFound(w, r)
 		}

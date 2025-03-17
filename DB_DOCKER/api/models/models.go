@@ -174,3 +174,13 @@ type GetMyChatroomResponse struct {
 		ChatRoomIDs []int `json:"chatRoomID"`
 	} `json:"user"`
 }
+
+// GetChatroomParticipantsRequest représente la requête pour obtenir les participants d'une chatroom
+type GetChatroomParticipantsRequest struct {
+	ChatroomID int `json:"chatRoomID"`
+}
+
+// GetChatroomParticipantsResponse représente la réponse contenant les participants d'une chatroom
+type GetChatroomParticipantsResponse struct {
+	Participants []int `json:"participants"`
+}

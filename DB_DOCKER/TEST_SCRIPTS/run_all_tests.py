@@ -112,7 +112,8 @@ def main():
     run_test("test_get_my_chatroom.py", "Récupération de mes chatrooms", "1")
     run_test("test_get_user_by_username.py", "Récupération d'utilisateur par username", "testuser1")
     run_test("test_change_password.py", "Changement de mot de passe", "1", "Test123!@#", "NewPass456!@#")
-    
+    run_test("test_get_chatroom_participants.py", "Récupération des participants d'une chatroom", "1")
+
     # Résumé final
     end_time = time.time()
     total_duration = round(end_time - start_time, 2)
