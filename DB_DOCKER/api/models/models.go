@@ -91,6 +91,7 @@ type GetUserRequest struct {
 // Response structure
 type GetUserResponse struct {
 	User struct {
+		UID        int      `json:"uid"`
 		Nom        string   `json:"nom"`
 		Prenom     string   `json:"prenom"`
 		DOB        string   `json:"dob"`
