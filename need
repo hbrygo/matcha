@@ -625,6 +625,7 @@ Entrée:
 Réponse (succès - 200):
 {
   "user": {
+    "uid": 42,                      // identifiant unique de l'utilisateur
     "nom": "Dupont",
     "prenom": "Jean",
     "dob": "1990-01-01",            // date de naissance
@@ -648,7 +649,6 @@ Erreurs:
 404: Utilisateur non trouvé
 405: Méthode non autorisée (seule la méthode POST est acceptée)
 500: Erreur serveur
-/*************************************************** */
 /*************************************************** */
 /*************************************************** */
 /get_my_chatroom
