@@ -41,6 +41,7 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	// prepare rseponse
 	var response models.GetUserResponse
+	response.User.UID = req.UID
 
 	err = db.QueryRow(`
     SELECT 
@@ -104,6 +105,8 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		response.User.Pictures = append(response.User.Pictures, picture)
 	}
+
+	// fmt.Printf("response: %v\n", response)
 
 	// Send response
 	w.Header().Set("Content-Type", "application/json")

@@ -7,7 +7,7 @@
     <title>Chat - Matcha</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <!-- <link rel="stylesheet" href="styles.css"> -->
 </head>
 
 <body>
@@ -55,6 +55,8 @@
 </html>
 
 <script type="module">
+    let myUid;
+
     function toggleMenu() {
         document.getElementById("navbarMenu").classList.toggle("show");
     }
@@ -85,7 +87,8 @@
                 return response.json();
             })
             .then(data => {
-                console.log(data);
+                // console.log("getNameByID: ", data);
+                console.log("data: ", data);
                 chatItem.innerHTML = data.user.prenom;
                 // return data;
             })
@@ -111,14 +114,18 @@
                 }
                 return response.json();
             })
-            .then(data => {
+            .then(async (data) => {
                 // console.log('participants:', data);
                 // renvoie l'id du participants qui n'est pas moi
-                if (data.participants[0] === document.cookie['uid']) {
+                // console.log('my uid:', myUid);
+                // console.log('participants:', data.participants);
+                if (data.participants[0] == myUid) {
                     // console.log('participants:', data.participants[1]);
+                    // console.log("send: ", data.participants[1]);
                     getNameByID(data.participants[1], chatItem);
                 }
-                // console.log('participants:', data.participants[0]);
+                // console.log('send:', data.participants[0]);
+                // console.log("beacause myUid: ", myUid);
                 getNameByID(data.participants[0], chatItem);
                 // return data.participants[0];
                 // console.log('participants:', participants);
@@ -160,8 +167,12 @@
             // console.log("username = ", username);
             let chatItem = document.createElement("li");
             await getChatRoomParticipants(id, chatItem);
+            // ajoute l'id de la room dans la class
+            chatItem.classList.add(id);
+            // chatItem.classList.add(chatRoomID);
             chatItem.classList.add("chat-item");
-            // chatItem.textContent = username;
+            // console.log(chatItem.classList);
+            chatItem.addEventListener("click", () => { loadChatMessages(chatItem.classList[0]) });
             chatList.appendChild(chatItem);
         }
     }
@@ -190,16 +201,20 @@
             });
     }
 
-    // function getCookie() {
-    //     fetch("/getCookie")
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             // console.log("data: ", data);
-    //             // ajoute le uid dans le cookie
-    //             document.cookie = `uid=${data.uid}`;
-    //             return data.uid;
-    //         });
-    // }
+    async function getCookie() {
+        return new Promise(async (resolve) => {
+            const result = await fetch("/getCookie")
+            // .then(response => response.json())
+            // .then(data => {
+            //     // console.log("data: ", data);
+            //     // ajoute le uid dans le cookie
+            //     // document.cookie = `uid=${data.uid}`;
+            //     console.log('data: ', data);
+            //     return data.find(val => val.Name === 'uid').Value;
+            // });
+            resolve((await (await result.json()).find((val) => { return val.Name === "uid" })).Value);
+        })
+    }
 
     function addToDb(message) {
         let xhr = new XMLHttpRequest();
@@ -228,16 +243,16 @@
             messageDiv.textContent = message;
             chatMessages.appendChild(messageDiv);
             inputMessage.value = "";
-            // console.log(getCookie());
-            // addToDb(message);
         }
     }
 
     inputMessage.addEventListener("keypress", function (e) {
         if (e.key === "Enter") {
             let message = inputMessage.value;
-            if (message)
+            if (message) {
                 addMessage();
+                addToDb(message);
+            }
         }
     });
 
@@ -247,7 +262,10 @@
     /**************************************   Display chat message   **************************************/
 
     function displayChatMessages(data) {
+        // console.log('displayChatMessages, data:', data);
         chatMessages.innerHTML = "";
+        if (!data.message)
+            return;
         data.forEach(message => {
             let messageDiv = document.createElement("div");
             messageDiv.classList.add("message", message.sender === document.cookie['uid'] ? "sent" : "received");
@@ -261,7 +279,7 @@
     }
 
     function loadChatMessages(roomID) {
-        fetch("/getChatMessages", {
+        fetch("/getMessages", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -312,7 +330,7 @@
     }
 
     function createChatRoom() {
-        let users = [3, 4];
+        let users = [1, 2];
         let roomName = "test";
 
         fetch("/createChatRoom", {
@@ -341,7 +359,9 @@
             });
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", async function () {
+        myUid = await getCookie();
+        // console.log('myUid:', myUid);
         // console.log('chat room created');
         // createChatRoom();
         // console.log("chat.js loaded");

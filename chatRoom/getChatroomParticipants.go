@@ -16,7 +16,7 @@ func GetChatroomParticipants(w http.ResponseWriter, r *http.Request) {
 	// get my cookie
 	_, err := r.Cookie("uid")
 	if err != nil {
-		http.Error(w, "You are not connected", 401)
+		http.Error(w, "You are not connected", http.StatusUnauthorized)
 		return
 	}
 
@@ -28,7 +28,7 @@ func GetChatroomParticipants(w http.ResponseWriter, r *http.Request) {
 	}
 
 	responseBody := bytes.NewBuffer(chatroomID)
-	fmt.Printf("chatroomID: %v\n", responseBody)
+	// fmt.Printf("chatroomID: %v\n", responseBody)
 
 	// Transmettre ce body à la nouvelle requête
 	resp, err := http.Post("http://localhost:8181/get_chatroom_participants", "application/json", responseBody)
@@ -47,10 +47,11 @@ func GetChatroomParticipants(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("Response from get_chatroom_participants: %s\n", response)
+	// fmt.Printf("Response from get_chatroom_participants: %s\n", response)
 
 	// Renvoyer cette réponse telle quelle à ton front
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(resp.StatusCode)
 	w.Write(response)
+	fmt.Printf("getChatroomParticipants done\n")
 }

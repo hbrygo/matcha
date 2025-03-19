@@ -31,7 +31,7 @@ func GetUserByName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	uid, _ := strconv.Atoi(UID.Value)
-	fmt.Printf("Cookie: %v\n", uid)
+	// fmt.Printf("Cookie: %v\n", uid)
 	postBody, err := json.Marshal(map[string]int{
 		"userID": uid,
 	})
@@ -81,9 +81,9 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// fmt.Printf("userID: %v\n", userID)
+	// fmt.Printf("ID i'm looking for: %v\n", userID)
 	responseBody := bytes.NewBuffer(userID)
-	fmt.Printf("userID: %v\n", responseBody)
+	fmt.Printf("ID i'm looking for: %v\n", responseBody)
 
 	// Transmettre ce body à la nouvelle requête
 	resp, err := http.Post("http://localhost:8181/get_user", "application/json", responseBody)

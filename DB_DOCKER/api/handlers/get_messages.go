@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"matcha/api/handlers_utils.go"
 	"matcha/api/models"
 	"matcha/database"
@@ -17,12 +20,25 @@ func GetMessageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get request data
+	// Lire et afficher le corps brut de la requête
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Failed to read request body", http.StatusBadRequest)
+		return
+	}
+	fmt.Printf("Corps brut de la requête : %s\n", string(body))
+
+	// Réinitialiser le lecteur pour le décodage JSON
+	r.Body = io.NopCloser(bytes.NewBuffer(body))
+
+	// Décoder le JSON
 	req, err := parseGetMessageRequest(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	fmt.Printf("JSON parsé : %+v\n", req)
 
 	// connect to database
 	db, err := database.InitDB()

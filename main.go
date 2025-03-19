@@ -100,7 +100,7 @@ func main() {
 	http.HandleFunc("POST /register", connection.Register)
 	http.HandleFunc("POST /login", connection.Login)
 	http.HandleFunc("POST /setData", connection.SetData)
-	http.HandleFunc("POST /getChatRoom", chatRoom.GetMessage)
+	http.HandleFunc("POST /getMessages", chatRoom.GetMessage)
 	http.HandleFunc("POST /sendMessage", chatRoom.NewMessage)
 	http.HandleFunc("POST /createChatRoom", chatRoom.NewChatRoom)
 	http.HandleFunc("POST /getChatRoomParticipants", chatRoom.GetChatroomParticipants)

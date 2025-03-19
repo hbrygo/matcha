@@ -4,41 +4,76 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
+	"io"
 	"net/http"
 	"strconv"
 )
 
 func GetMessage(w http.ResponseWriter, r *http.Request) {
-	UID, err := r.Cookie("uid")
+	fmt.Printf("GET MESSAGE\n")
+	uidCookie, err := r.Cookie("uid")
 	if err != nil {
-		http.Error(w, "Vous n'êtes pas connecté", 401)
+		http.Error(w, "Vous n'êtes pas connecté", http.StatusUnauthorized)
 		return
 	}
-	uid, _ := strconv.Atoi(UID.Value)
-	postBody, err := json.Marshal(map[string]int{
-		"uid": uid,
-	})
+	userID := uidCookie.Value
+
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		http.Error(w, "Error: json", 400)
+		http.Error(w, "Erreur lors de la lecture du corps de la requête", http.StatusInternalServerError)
+		return
+	}
+	defer r.Body.Close()
+
+	var requestBody map[string]interface{}
+	if err := json.Unmarshal(body, &requestBody); err != nil {
+		http.Error(w, "Erreur lors du parsing du JSON", http.StatusBadRequest)
 		return
 	}
 
-	responseBody := bytes.NewBuffer(postBody)
-	resp, err := http.Post("http://localhost:8181/get_message", "application/json", responseBody)
+	// convert chatRoom en entier
+	chatRoom, ok := requestBody["chatRoom"].(string)
+	if !ok {
+		http.Error(w, "Invalid chatRoom", http.StatusBadRequest)
+		return
+	}
+	requestBody["chatRoom"], err = strconv.Atoi(chatRoom)
 	if err != nil {
-		log.Fatalf("An Error Occured %v", err)
+		http.Error(w, "Invalid chatRoom", http.StatusBadRequest)
+		return
+	}
+
+	// Convertir userID en entier
+	userIDInt, err := strconv.Atoi(userID)
+	if err != nil {
+		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		return
+	}
+
+	requestBody["userID"] = userIDInt
+
+	modifiedBody, err := json.Marshal(requestBody)
+	if err != nil {
+		http.Error(w, "Erreur lors de la création du JSON", http.StatusInternalServerError)
+		return
+	}
+
+	resp, err := http.Post("http://localhost:8181/get_message", "application/json", bytes.NewBuffer(modifiedBody))
+	if err != nil {
+		http.Error(w, "Erreur lors de la requête", http.StatusInternalServerError)
+		return
 	}
 	defer resp.Body.Close()
 
-	var message []Message
-	if err := json.NewDecoder(resp.Body).Decode(&message); err != nil {
-		fmt.Printf("Error parsing JSON: %v\n", err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	response, err := io.ReadAll(resp.Body)
+	if err != nil {
+		http.Error(w, "Erreur lors de la lecture de la réponse", http.StatusInternalServerError)
 		return
 	}
 
+	fmt.Printf("GET MESSAGE RESPONSE: %s\n", response)
+
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(message)
+	w.WriteHeader(resp.StatusCode)
+	w.Write(response)
 }
