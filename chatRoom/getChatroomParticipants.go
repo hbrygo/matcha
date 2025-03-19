@@ -2,11 +2,9 @@ package chatRoom
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
-	"log"
+	"io"
 	"net/http"
-	"strconv"
 )
 
 type GetChatroomParticipantsResponse struct {
@@ -14,53 +12,45 @@ type GetChatroomParticipantsResponse struct {
 }
 
 func GetChatroomParticipants(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("GetChatroomParticipants\n")
-	UID, err := r.Cookie("uid")
+	fmt.Printf("getChatroomParticipants\n")
+	// get my cookie
+	_, err := r.Cookie("uid")
 	if err != nil {
 		http.Error(w, "You are not connected", 401)
 		return
 	}
-	uid, _ := strconv.Atoi(UID.Value)
-	fmt.Printf("Cookie: %v\n", uid)
-	chatroomID, err := strconv.Atoi(r.URL.Query().Get("chatroomID"))
+
+	// get chatroom id dans le body du POST
+	chatroomID, err := io.ReadAll(r.Body)
 	if err != nil {
-		http.Error(w, "Error: chatroomID", 400)
-		return
-	}
-	postBody, err := json.Marshal(map[string]int{
-		"chatroomID": chatroomID,
-	})
-	if err != nil {
-		http.Error(w, "Error: json", 400)
+		http.Error(w, "Error reading request body", http.StatusInternalServerError)
 		return
 	}
 
-	responseBody := bytes.NewBuffer(postBody)
+	responseBody := bytes.NewBuffer(chatroomID)
+	fmt.Printf("chatroomID: %v\n", responseBody)
+
+	// Transmettre ce body à la nouvelle requête
 	resp, err := http.Post("http://localhost:8181/get_chatroom_participants", "application/json", responseBody)
 	if err != nil {
-		log.Fatalf("An Error Occured %v", err)
+		http.Error(w, "Error making request to get_chatroom_participants", http.StatusInternalServerError)
+		return
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		http.Error(w, "Error: "+resp.Status, resp.StatusCode)
+	// fmt.Printf("Response from get_chatroom_participants: %v\n", resp)
+
+	// Lire la réponse de la nouvelle requête
+	response, err := io.ReadAll(resp.Body)
+	if err != nil {
+		http.Error(w, "Error reading response body", http.StatusInternalServerError)
 		return
 	}
 
-	if resp.StatusCode == http.StatusNoContent {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode([]Message{})
-		return
-	}
+	fmt.Printf("Response from get_chatroom_participants: %s\n", response)
 
-	var message GetChatroomParticipantsResponse
-	if err := json.NewDecoder(resp.Body).Decode(&message); err != nil {
-		fmt.Printf("Error parsing JSON: %v\n", err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+	// Renvoyer cette réponse telle quelle à ton front
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(message.Participants)
+	w.WriteHeader(resp.StatusCode)
+	w.Write(response)
 }

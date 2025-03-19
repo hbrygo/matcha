@@ -4,12 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 )
 
 type UserResponse struct {
 	User struct {
+		uid        int      `json:"uid"`
 		LastName   string   `json:"nom"`
 		FirstName  string   `json:"prenom"`
 		dob        string   `json:"dob"`
@@ -61,4 +63,49 @@ func GetUserByName(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(user)
+}
+
+func GetUserByID(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("getUserByID\n")
+	// get my cookie
+	_, err := r.Cookie("uid")
+	if err != nil {
+		http.Error(w, "You are not connected", 401)
+		return
+	}
+
+	// get chatroom id dans le body du POST
+	userID, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Error reading request body", http.StatusInternalServerError)
+		return
+	}
+
+	// fmt.Printf("userID: %v\n", userID)
+	responseBody := bytes.NewBuffer(userID)
+	fmt.Printf("userID: %v\n", responseBody)
+
+	// Transmettre ce body à la nouvelle requête
+	resp, err := http.Post("http://localhost:8181/get_user", "application/json", responseBody)
+	if err != nil {
+		http.Error(w, "Error making request to get_user", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	// fmt.Printf("Response from get_user: %v\n", resp)
+
+	// Lire la réponse de la nouvelle requête
+	response, err := io.ReadAll(resp.Body)
+	if err != nil {
+		http.Error(w, "Error reading response body", http.StatusInternalServerError)
+		return
+	}
+
+	// fmt.Printf("Response from get_user: %s\n", response)
+
+	// Renvoyer cette réponse telle quelle à ton front
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(resp.StatusCode)
+	w.Write(response)
 }

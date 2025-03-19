@@ -54,7 +54,7 @@
 
 </html>
 
-<script>
+<script type="module">
     function toggleMenu() {
         document.getElementById("navbarMenu").classList.toggle("show");
     }
@@ -66,10 +66,75 @@
 
 
     /**************************************   Add all chat   **************************************/
-    function displayChatList(data) {
+    function getNameByID(id, chatItem) {
+        console.log('getNameByID');
+        fetch("/getUserByID", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                uid: id
+            })
+        })
+            .then(response => {
+                // console.log(response);
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                chatItem.innerHTML = data.user.prenom;
+                // return data;
+            })
+            .catch(error => {
+                console.error("There has been a problem with your fetch operation:", error);
+            });
+    }
+
+    async function getChatRoomParticipants(chatRoomID, chatItem) {
+        await fetch("/getChatRoomParticipants", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                chatRoomID: chatRoomID
+            })
+        })
+            .then(response => {
+                // console.log(response);
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                // console.log('participants:', data);
+                // renvoie l'id du participants qui n'est pas moi
+                if (data.participants[0] === document.cookie['uid']) {
+                    // console.log('participants:', data.participants[1]);
+                    getNameByID(data.participants[1], chatItem);
+                }
+                // console.log('participants:', data.participants[0]);
+                getNameByID(data.participants[0], chatItem);
+                // return data.participants[0];
+                // console.log('participants:', participants);
+                // return participants;
+                // return data;
+            })
+            .catch(error => {
+                console.error("There has been a problem with your fetch operation:", error);
+            });
+    }
+
+    async function displayChatList(data) {
+        console.log('debut chat list: ', data.user.chatRoomID);
         chatList.innerHTML = "";
 
-        if (!data.length) {
+        if (!data.user.chatRoomID) {
             let chatItem = document.createElement("li");
             chatItem.classList.add("chat-item");
             chatItem.textContent = "No chat rooms found";
@@ -90,16 +155,15 @@
             return;
         }
 
-        data.forEach(chat => {
-            console.log(chat);
-            // let name = getParticipantOfAChatRoom(chat);
+        for (let id of data.user.chatRoomID) {
+            // console.log("id = ", id);
+            // console.log("username = ", username);
             let chatItem = document.createElement("li");
+            await getChatRoomParticipants(id, chatItem);
             chatItem.classList.add("chat-item");
-            // chatItem.classList.add(chat.ID);
-            // chatItem.textContent = name;
-            chatItem.textContent = chat.name;
+            // chatItem.textContent = username;
             chatList.appendChild(chatItem);
-        });
+        }
     }
 
     function loadChatList() {
@@ -110,29 +174,32 @@
             }
         })
             .then(response => {
-                console.log(response);
+                // console.log(response);
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
                 return response.json();
             })
             .then(data => {
-                console.log(data);
-                return (data);
+                // console.log(data);
+                displayChatList(data);
+                // return (data);
             })
             .catch(error => {
                 console.error("There has been a problem with your fetch operation:", error);
             });
     }
 
-    function getCookie() {
-        fetch("/getCookie")
-            .then(response => response.json())
-            .then(data => {
-                // console.log("data: ", data);
-                return data.uid;
-            });
-    }
+    // function getCookie() {
+    //     fetch("/getCookie")
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             // console.log("data: ", data);
+    //             // ajoute le uid dans le cookie
+    //             document.cookie = `uid=${data.uid}`;
+    //             return data.uid;
+    //         });
+    // }
 
     function addToDb(message) {
         let xhr = new XMLHttpRequest();
@@ -143,7 +210,7 @@
                 console.log(xhr.responseText);
             }
         };
-        let uid = getCookie();
+        let uid = document.cookie['uid'];
         let roonID = getRoomID();
         xhr.send(JSON.stringify({
             message: message,
@@ -161,7 +228,7 @@
             messageDiv.textContent = message;
             chatMessages.appendChild(messageDiv);
             inputMessage.value = "";
-            console.log(getCookie());
+            // console.log(getCookie());
             // addToDb(message);
         }
     }
@@ -183,7 +250,7 @@
         chatMessages.innerHTML = "";
         data.forEach(message => {
             let messageDiv = document.createElement("div");
-            messageDiv.classList.add("message", message.sender === getCookie() ? "sent" : "received");
+            messageDiv.classList.add("message", message.sender === document.cookie['uid'] ? "sent" : "received");
             messageDiv.textContent = message.message;
             chatMessages.appendChild(messageDiv);
         });
@@ -204,14 +271,14 @@
             })
         })
             .then(response => {
-                console.log(response);
+                // console.log(response);
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
                 return response.json();
             })
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 displayChatMessages(data);
             })
             .catch(error => {
@@ -219,116 +286,34 @@
             });
     }
 
+    /**************************************   Create chat room   **************************************/
 
-    /**************************************   Get user of specific chatroom   **************************************/
-
-    function getNameOfParticipant(data) {
-        let uid = getCookie();
-        let participant = data.find(participant => participant !== uid);
-        fetch("/getUser", {
-            method: "POST",
+    function getAllChatRooms() {
+        fetch("/getAllChatRooms", {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                userID: participant
-            })
+            }
         })
             .then(response => {
-                console.log(response);
+                // console.log(response);
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
                 return response.json();
             })
             .then(data => {
-                console.log(data);
-                return data.name;
-            })
-            .catch(error => {
-                console.error("There has been a problem with your fetch operation:", error);
-            });
-    }
-
-    function getParticipantOfAChatRoom(roomID) {
-        fetch("/getParticipantOfAChatRoom", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                chatRoom: roomID
-            })
-        })
-            .then(response => {
-                console.log(response);
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                return getNameOfParticipant(data);
-            })
-            .catch(error => {
-                console.error("There has been a problem with your fetch operation:", error);
-            });
-    }
-
-    /**************************************   Create chatroom   **************************************/
-
-    function getUserIDByName(name) {
-        fetch("/getUserByName", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                name: name
-            })
-        })
-            .then(response => {
-                console.log(response);
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                return data.FristName;
-            })
-            .catch(error => {
-                console.error("There has been a problem with your fetch operation:", error);
-            });
-    }
-
-    function getAllChatRoomID() {
-        fetch("/getAllChatRoomID")
-            .then(response => response.json())
-            .then(data => {
-                console.log("all chatroom", data);
+                // console.log(data);
                 return data;
+            })
+            .catch(error => {
+                console.error("There has been a problem with your fetch operation:", error);
             });
     }
 
-    function generateRoomID() {
-        getAllChatRoomID()
-            .then(data => {
-                let roomID = Math.floor(Math.random() * 1000000);
-                while (data.includes(roomID)) {
-                    roomID = Math.floor(Math.random() * 1000000);
-                }
-                return roomID;
-            });
-        return Math.floor(Math.random() * 1000000);
-    }
-
-    function createChatRoom(userID) {
-        let otherID = getUserIDByName(userID);
-        let roomID = generateRoomID();
-        let allUser = [getCookie(), otherID];
+    function createChatRoom() {
+        let users = [3, 4];
+        let roomName = "test";
 
         fetch("/createChatRoom", {
             method: "POST",
@@ -336,19 +321,19 @@
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                userID: allUser,
-                chatRoom: roomID
+                user_ids: users,
+                name: roomName
             })
         })
             .then(response => {
-                console.log(response);
+                // console.log(response);
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
                 return response.json();
             })
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 return data;
             })
             .catch(error => {
@@ -357,8 +342,12 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-        createChatRoom();
-        displayChatList();
+        // console.log('chat room created');
+        // createChatRoom();
+        // console.log("chat.js loaded");
+        loadChatList();
+        // console.log(chatList);
+        // displayChatList(chatList);
     });
 </script>
 

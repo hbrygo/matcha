@@ -2,6 +2,7 @@ package handlers_utils
 
 import (
 	"database/sql"
+	"fmt"
 	//"matcha/api/handlers"
 	"matcha/api/models"
 )
@@ -48,6 +49,8 @@ func AddParticipantsToRoom(tx *sql.Tx, chatroomID int, userIDs []int) error {
 
 // check if chatroom exists
 func CheckChatroomExists(db *sql.DB, chatroomID int) bool {
+	fmt.Printf("CheckChatroomExists\n")
+	fmt.Printf("chatroomID: %v\n", chatroomID)
 	var exists bool
 	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM chat_rooms WHERE chatroom_id = ?)", chatroomID).Scan(&exists)
 	return err == nil && exists

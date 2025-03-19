@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"matcha/api/models"
 	"matcha/database"
 	"net/http"
@@ -23,6 +24,8 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// val UID
+	fmt.Printf("UID: %v\n", req.UID)
+
 	if req.UID <= 0 {
 		http.Error(w, "Invalid UID", http.StatusBadRequest)
 		return

@@ -92,10 +92,10 @@ func getMe(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/", sendPage)
-	http.HandleFunc("/logout", connection.Logout)
+	http.HandleFunc("GET /logout", connection.Logout)
 	http.HandleFunc("GET /getCookie", cookieGestion.GetCookie)
-	http.HandleFunc("GET /getMyChatRoom", chatRoom.GetMyChatRoom)
 	http.HandleFunc("GET /getAllChatRoom", chatRoom.GetAllChatRoom)
+	http.HandleFunc("GET /getMyChatRoom", chatRoom.GetMyChatRoom)
 	http.HandleFunc("POST /me", getMe)
 	http.HandleFunc("POST /register", connection.Register)
 	http.HandleFunc("POST /login", connection.Login)
@@ -103,13 +103,14 @@ func main() {
 	http.HandleFunc("POST /getChatRoom", chatRoom.GetMessage)
 	http.HandleFunc("POST /sendMessage", chatRoom.NewMessage)
 	http.HandleFunc("POST /createChatRoom", chatRoom.NewChatRoom)
-	http.HandleFunc("POST /getChatroomParticipants", chatRoom.GetChatroomParticipants)
+	http.HandleFunc("POST /getChatRoomParticipants", chatRoom.GetChatroomParticipants)
 	http.HandleFunc("POST /getUserByName", connection.GetUserByName)
+	http.HandleFunc("POST /getUserByID", connection.GetUserByID)
 	http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("images"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("js"))))
-	fmt.Println("Serveur démarré sur : http://localhost:8080")
-	err := http.ListenAndServe(":8080", nil)
+	fmt.Println("Serveur démarré sur : https://localhost:8080")
+	err := http.ListenAndServeTLS(":8080", "cert/cert.csr", "cert/cert.key", nil)
 	if err != nil {
 		fmt.Println("Erreur lors du démarrage du serveur")
 		return

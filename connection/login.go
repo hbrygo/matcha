@@ -95,6 +95,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("An Error Occured %v", err)
 	}
 
+	fmt.Printf("API response: %v\n", apiResponse)
+
 	var response map[string]interface{}
 	if resp.StatusCode == 200 {
 		response = map[string]interface{}{

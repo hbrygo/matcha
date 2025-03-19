@@ -2,11 +2,9 @@ package chatRoom
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
-	"log"
+	"io"
 	"net/http"
-	"strconv"
 )
 
 type ChatRoom struct {
@@ -14,31 +12,37 @@ type ChatRoom struct {
 }
 
 func NewChatRoom(w http.ResponseWriter, r *http.Request) {
-	UID, err := r.Cookie("uid")
+	fmt.Printf("NewChatRoom\n")
+
+	// Lire le body de la requête entrante
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		http.Error(w, "You are not connected", 401)
+		http.Error(w, "Error reading request body", http.StatusBadRequest)
 		return
 	}
-	uid, _ := strconv.Atoi(UID.Value)
-	postBody, err := json.Marshal(map[string]int{
-		"uid": uid,
-	})
+	defer r.Body.Close()
+
+	fmt.Printf("Body: %s\n", body)
+
+	// Transmettre ce body à la nouvelle requête
+	resp, err := http.Post("http://localhost:8181/create_chatroom", "application/json", bytes.NewBuffer(body))
 	if err != nil {
-		http.Error(w, "Error: json", 400)
+		http.Error(w, "Error making request to create_chatroom", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Lire la réponse de la nouvelle requête
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		http.Error(w, "Error reading response body", http.StatusInternalServerError)
 		return
 	}
 
-	responseBody := bytes.NewBuffer(postBody)
-	resp, err := http.Post("http://localhost:8181/create_chatroom", "application/json", responseBody)
-	if err != nil {
-		log.Fatalf("An Error Occured %v", err)
-	}
-	defer resp.Body.Close()
-	var chatRoom ChatRoom
-	err = json.NewDecoder(resp.Body).Decode(&chatRoom)
-	if err != nil {
-		log.Fatalf("An Error Occured %v", err)
-	}
-	fmt.Printf("ChatRoomID: %v\n", chatRoom.ChatRoomID)
-	http.Redirect(w, r, "/chatRoom.html", http.StatusSeeOther)
+	fmt.Printf("Response: %s\n", responseBody)
+
+	// Renvoyer cette réponse telle quelle à ton front
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(resp.StatusCode)
+	w.Write(responseBody)
 }

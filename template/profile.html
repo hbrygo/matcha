@@ -320,33 +320,33 @@
 
     // let cookies;
 
-    function getCookie() {
-        return fetch('/getCookie', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // console.log('getCookie: ', data);
-                return data;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                return {};
-            });
-    }
+    // function getCookie() {
+    //     return fetch('/getCookie', {
+    //         method: 'GET',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         }
+    //     })
+    //         .then(response => {
+    //             if (!response.ok) {
+    //                 throw new Error('Network response was not ok');
+    //             }
+    //             return response.json();
+    //         })
+    //         .then(data => {
+    //             // console.log('getCookie: ', data);
+    //             return data;
+    //         })
+    //         .catch(error => {
+    //             console.error('Error:', error);
+    //             return {};
+    //         });
+    // }
 
-    getCookie().then(cookies => {
-        // console.log(cookies[0].Value);
-        postBody.uid = cookies[0].Value;
-    });
+    // getCookie().then(cookies => {
+    //     // console.log(cookies[0].Value);
+    //     postBody.uid = cookies[0].Value;
+    // });
 
     document.addEventListener("DOMContentLoaded", function () {
         // Récupérer les données de l'utilisateur
