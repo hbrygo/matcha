@@ -1,49 +1,95 @@
 package chatRoom
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 )
 
+type IncomingMessage struct {
+	UID    string `json:"userID"`
+	Msg    string `json:"message"`
+	RoomID string `json:"chatRoom"`
+}
+
 type Message struct {
-	UID    int    `json:"uid"`
-	Msg    string `json:"msg"`
-	RoomID int    `json:"room_id"`
+	UID    int    `json:"userID"`
+	Msg    string `json:"message"`
+	RoomID int    `json:"chatRoom"`
 }
 
 func NewMessage(w http.ResponseWriter, r *http.Request) {
-	UID, err := r.Cookie("uid")
+	fmt.Printf("NEW MESSAGE\n")
+
+	// Vérifier si l'utilisateur est connecté
+	_, err := r.Cookie("uid")
 	if err != nil {
-		http.Error(w, "User not connected", 401)
+		http.Error(w, "User not connected", http.StatusUnauthorized)
 		return
 	}
-	uid, _ := strconv.Atoi(UID.Value)
 
-	var msg Message
-	err = json.NewDecoder(r.Body).Decode(&msg)
+	// Lire le corps de la requête entrante
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		http.Error(w, "Error: decode", 400)
+		http.Error(w, "Failed to read request body", http.StatusInternalServerError)
+		return
+	}
+	defer r.Body.Close()
+
+	// Désérialiser le JSON reçu
+	var incomingMessage IncomingMessage
+	if err := json.Unmarshal(body, &incomingMessage); err != nil {
+		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
 		return
 	}
 
-	if msg.UID != uid {
-		http.Error(w, "U are not this person, stop this pls", 401)
-		return
-	}
-
-	if msg.RoomID == 0 {
-		http.Error(w, "No room specified", 400)
-		return
-	}
-
-	resp, err := http.Post("http://localhost:8181/new_message", "application/json", r.Body)
+	// Convertir les champs en entiers
+	roomID, err := strconv.Atoi(incomingMessage.RoomID)
 	if err != nil {
-		http.Error(w, "Error: message not send", 500)
+		http.Error(w, "Invalid chatRoom ID", http.StatusBadRequest)
+		return
+	}
+
+	userID, err := strconv.Atoi(incomingMessage.UID)
+	if err != nil {
+		http.Error(w, "Invalid userID", http.StatusBadRequest)
+		return
+	}
+
+	// Créer un message avec les types corrects
+	outgoingMessage := Message{
+		UID:    userID,
+		Msg:    incomingMessage.Msg,
+		RoomID: roomID,
+	}
+
+	// Convertir le message en JSON
+	messageJSON, err := json.Marshal(outgoingMessage)
+	if err != nil {
+		http.Error(w, "Failed to encode message", http.StatusInternalServerError)
+		return
+	}
+
+	// Transmettre la requête à l'API externe
+	resp, err := http.Post("http://localhost:8181/new_message", "application/json", bytes.NewBuffer(messageJSON))
+	if err != nil {
+		http.Error(w, "Failed to contact external API", http.StatusInternalServerError)
 		return
 	}
 	defer resp.Body.Close()
 
-	fmt.Fprintf(w, "Message send")
+	// Lire la réponse de l'API externe
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		http.Error(w, "Failed to read response from external API", http.StatusInternalServerError)
+		return
+	}
+
+	// Renvoyer la réponse au client
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(resp.StatusCode)
+	w.Write(responseBody)
 }
