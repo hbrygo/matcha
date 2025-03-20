@@ -91,6 +91,8 @@ func getMe(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	http.HandleFunc("GET /sse", chatRoom.SSEHandler)
+
 	http.HandleFunc("/", sendPage)
 	http.HandleFunc("GET /logout", connection.Logout)
 	http.HandleFunc("GET /getCookie", cookieGestion.GetCookie)

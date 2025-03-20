@@ -108,7 +108,7 @@
 
                 const uploadImage = async (index) => {
                     // Image upload logic would go here
-                    console.log('Upload image for index:', index);
+                    // console.log('Upload image for index:', index);
                 };
 
                 const submitForm = async () => {
@@ -122,11 +122,11 @@
                         });
 
                         for await (const chunk of stream) {
-                            console.log(chunk.text);
+                            // console.log(chunk.text);
                         }
 
                         // Handle form submission
-                        console.log('Form submitted:', profile.value);
+                        // console.log('Form submitted:', profile.value);
                     } catch (error) {
                         throw error;
                     }

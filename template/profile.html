@@ -200,7 +200,7 @@
     }
 
     function updateAll() {
-        console.log('updateAll');
+        // console.log('updateAll');
         updateNameAge();
         document.getElementById('bioArea').dispatchEvent(new Event('input'));
         document.getElementById('interests').dispatchEvent(new Event('click'));
@@ -226,7 +226,7 @@
     function selectImage(boxId) {
         var input;
 
-        console.log('click');
+        // console.log('click');
         currentBox = document.getElementById(boxId);
         // console.log(currentBox);
         input = document.getElementById("fileInput");
@@ -234,7 +234,7 @@
         input.addEventListener("change", function (event) {
             if (currentBox && event.target.files.length > 0) {
                 const file = event.target.files[0];
-                console.log("Changement ici!!");
+                // console.log("Changement ici!!");
                 displayImage(file, currentBox);
             }
         });
@@ -284,7 +284,7 @@
         event.currentTarget.classList.remove("drag-over");
 
         const file = event.dataTransfer.files[0];
-        console.log(file);
+        // console.log(file);
         if (file) {
             displayImage(file, document.getElementById(boxId));
         }
@@ -358,7 +358,7 @@
         })
             .then(response => response.json())
             .then(data => {
-                console.log("data", data);
+                // console.log("data", data);
                 // console.log("cookies: ", cookies);
                 // postBody.uid = cookies.uid;
                 // console.log("data: ", data.user);
@@ -398,7 +398,7 @@
         postBody.photos = Array.from(document.querySelectorAll('.photo-box img')).map(img => img.src);
         postBody.bio = document.getElementById('bioArea').value;
 
-        console.log('postBody', postBody);
+        // console.log('postBody', postBody);
 
         fetch('/setData', {
             method: 'POST',
@@ -414,7 +414,7 @@
                 return response.json();
             })
             .then(data => {
-                console.log("data", data);
+                // console.log("data", data);
                 // loadPage('index');
             })
             .catch(error => {

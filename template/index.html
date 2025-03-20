@@ -99,7 +99,7 @@
                 return response.json();
             })
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 return data;
             })
             .catch(error => {
@@ -114,7 +114,7 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         getCookie().then(cookies => {
-            console.log(cookies);
+            // console.log(cookies);
             const cookiesObj = cookies.reduce((acc, cookie) => {
                 acc[cookie.Name] = cookie.Value;
                 return acc;
@@ -162,7 +162,7 @@
     loadNextProfile(0);
 
     document.getElementById('love').addEventListener('click', function () {
-        console.log('love');
+        // console.log('love');
         let currentCard = document.getElementById('card');
         if (currentCard) {
             currentCard.style.transform = 'translate(150%, -50%) rotate(30deg)';
@@ -176,7 +176,7 @@
     });
 
     document.getElementById('nope').addEventListener('click', function () {
-        console.log('nope');
+        // console.log('nope');
         let currentCard = document.getElementById('card');
         if (currentCard) {
             currentCard.style.transform = 'translate(-150%, -50%) rotate(-30deg)';

@@ -181,7 +181,7 @@
             formData.dob = document.getElementById("dob").value;
         } else if (step === 3) {
             formData.gender = document.getElementById("gender").value;
-            console.log(formData.gender);
+            // console.log(formData.gender);
         } else if (step === 4) {
             formData.preference = document.getElementById("preference").value;
             // } else if (step === 5) {
@@ -223,7 +223,7 @@
                 button.classList.add("active");
             });
         } else if (step === 6) {
-            console.log(formData.photos);
+            // console.log(formData.photos);
             restorePhotos();
             // document.getElementById("photos").value = formData.photos;
         } else if (step === 7) {
@@ -232,9 +232,9 @@
     }
 
     function removeInterest(interest) {
-        console.log(formData.interests);
+        // console.log(formData.interests);
         formData.interest = formData.interest.filter(i => i !== interest);
-        console.log(formData.interests);
+        // console.log(formData.interests);
     }
 
     function toggleInterest(button, interest) {
@@ -248,7 +248,7 @@
     }
 
     function submitForm() {
-        console.log('formData', formData);
+        // console.log('formData', formData);
         // return;
         fetch('/setData', {
             method: 'POST',
@@ -264,7 +264,7 @@
                 return response.json();
             })
             .then(data => {
-                console.log("data", data);
+                // console.log("data", data);
                 loadPage('index');
             })
             .catch(error => {
@@ -294,7 +294,7 @@
                     acc[cookie.Name] = cookie.Value;
                     return acc;
                 }, {});
-                console.log(cookiesObj);
+                // console.log(cookiesObj);
                 if (!cookiesObj.uid) {
                     loadPage('register');
                 } else if (cookiesObj.uid && !cookiesObj.firstStep) {
@@ -318,7 +318,7 @@
     function selectImage(boxId) {
         var input;
 
-        console.log('click');
+        // console.log('click');
         currentBox = document.getElementById(boxId);
         // console.log(currentBox);
         input = document.getElementById("fileInput");
@@ -326,7 +326,7 @@
         input.addEventListener("change", function (event) {
             if (currentBox && event.target.files.length > 0) {
                 const file = event.target.files[0];
-                console.log("Changement ici!!");
+                // console.log("Changement ici!!");
                 displayImage(file, currentBox);
             }
         });
@@ -336,7 +336,7 @@
     // fileInput.addEventListener("change", function (event) {
     //     if (currentBox && event.target.files.length > 0) {
     //         const file = event.target.files[0];
-    //         console.log("Changement ici!!");
+    //       // console.log("Changement ici!!");
     //         displayImage(file, currentBox);
     //     }
     // });
@@ -365,7 +365,7 @@
     }
 
     function removeImage(boxId) {
-        console.log(boxId);
+        // console.log(boxId);
         const box = document.getElementById(boxId);
         box.innerHTML = `<span class="placeholder">Drop or Click</span>`;
         // retire la photo du tableau
@@ -387,7 +387,7 @@
         event.currentTarget.classList.remove("drag-over");
 
         const file = event.dataTransfer.files[0];
-        console.log(file);
+        // console.log(file);
         if (file) {
             displayImage(file, document.getElementById(boxId));
         }

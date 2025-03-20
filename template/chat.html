@@ -70,7 +70,7 @@
 
     /**************************************   Add all chat   **************************************/
     function getNameByID(id, chatItem) {
-        console.log('getNameByID');
+        // console.log('getNameByID');
         fetch("/getUserByID", {
             method: "POST",
             headers: {
@@ -89,7 +89,7 @@
             })
             .then(data => {
                 // console.log("getNameByID: ", data);
-                console.log("data: ", data);
+                // console.log("data: ", data);
                 chatItem.innerHTML = data.user.prenom;
                 // return data;
             })
@@ -139,7 +139,7 @@
     }
 
     async function displayChatList(data) {
-        console.log('debut chat list: ', data.user.chatRoomID);
+        // console.log('debut chat list: ', data.user.chatRoomID);
         chatList.innerHTML = "";
 
         if (!data.user.chatRoomID) {
@@ -205,34 +205,12 @@
     async function getCookie() {
         return new Promise(async (resolve) => {
             const result = await fetch("/getCookie")
-            // .then(response => response.json())
-            // .then(data => {
-            //     // console.log("data: ", data);
-            //     // ajoute le uid dans le cookie
-            //     // document.cookie = `uid=${data.uid}`;
-            //     console.log('data: ', data);
-            //     return data.find(val => val.Name === 'uid').Value;
-            // });
             resolve((await (await result.json()).find((val) => { return val.Name === "uid" })).Value);
         })
     }
 
     function addToDb(message) {
-        // let xhr = new XMLHttpRequest();
-        // xhr.open("POST", "/sendMessage", true);
-        // xhr.setRequestHeader("Content-Type", "application/json");
-        // xhr.onreadystatechange = function () {
-        //     if (xhr.readyState === 4 && xhr.status === 200) {
-        //         console.log(xhr.responseText);
-        //     }
-        // };
-        // let uid = document.cookie['uid'];
-        // let roonID = getRoomID();
-        // xhr.send(JSON.stringify({
-        //     message: message,
-        //     chatRoom: currentRoomID,
-        //     userID: myUid
-        // }))
+
         fetch("/sendMessage", {
             method: "POST",
             headers: {
@@ -252,7 +230,11 @@
                 return response.json();
             })
             .then(data => {
-                console.log(data);
+                // The message is already added via SSE, no need to add it again here
+                // console.log("Message sent successfully:", data);
+
+                // Clear input field
+                inputMessage.value = "";
             })
             .catch(error => {
                 console.error("There has been a problem with your fetch operation:", error);
@@ -287,12 +269,12 @@
     /**************************************   Display chat message   **************************************/
 
     function displayChatMessages(data) {
-        console.log('displayChatMessages, data:', data);
+        // console.log('displayChatMessages, data:', data);
         chatMessages.innerHTML = "";
         if (!data.messages)
             return;
         data.messages.forEach(element => {
-            console.log('element:', element);
+            // console.log('element:', element);
             let messageDiv = document.createElement("div");
             messageDiv.classList.add("message");
             if (element.userID == myUid) {
@@ -310,6 +292,10 @@
     }
 
     function loadChatMessages(roomID) {
+        currentRoomID = roomID;
+
+        // Connect to SSE for this room
+        connectToSSE(roomID);
         fetch("/getMessages", {
             method: "POST",
             headers: {
@@ -390,6 +376,56 @@
                 console.error("There has been a problem with your fetch operation:", error);
             });
     }
+
+    /**************************************   websocket   **************************************/
+    let eventSource;
+
+    function connectToSSE(roomID) {
+        console.log('Connecting to SSE for room:', roomID);
+        // Close any existing connection
+        if (eventSource) {
+            eventSource.close();
+        }
+
+        // Connect to SSE endpoint
+        eventSource = new EventSource(`/sse?roomID=${roomID}`);
+
+        // Handle incoming messages
+        eventSource.onmessage = function (event) {
+            console.log('Received SSE message:', event.data);
+            const messageData = JSON.parse(event.data);
+
+            let messageDiv = document.createElement("div");
+            messageDiv.classList.add("message");
+            if (messageData.userID == myUid) {
+                messageDiv.classList.add("sent");
+            } else {
+                messageDiv.classList.add("received");
+            }
+            messageDiv.textContent = messageData.message;
+
+            // Add to chat
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        };
+
+        eventSource.onerror = function (error) {
+            console.error('SSE Error:', error);
+            eventSource.close();
+            // Try to reconnect after a delay
+            setTimeout(() => connectToSSE(roomID), 5000);
+        };
+    }
+
+    // Add disconnect when changing rooms or leaving the page
+    function disconnectSSE() {
+        if (eventSource) {
+            eventSource.close();
+            eventSource = null;
+        }
+    }
+
+    window.addEventListener('beforeunload', disconnectSSE);
 
     document.addEventListener("DOMContentLoaded", async function () {
         myUid = await getCookie();
