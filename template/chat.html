@@ -173,7 +173,12 @@
             // chatItem.classList.add(chatRoomID);
             chatItem.classList.add("chat-item");
             // console.log(chatItem.classList);
-            chatItem.addEventListener("click", () => { loadChatMessages(chatItem.classList[0]) });
+            chatItem.addEventListener("click", () => {
+                loadChatMessages(chatItem.classList[0]);
+                chatItem.classList.remove('unread');
+                // scroll jusqu'en bas de la div chat-messages
+                chatMessages.scrollBottom = chatMessages.scrollHeight;
+            });
             chatList.appendChild(chatItem);
         }
     }
@@ -210,7 +215,9 @@
     }
 
     function addToDb(message) {
-
+        console.log('addToDb, message:', message);
+        console.log('addToDb, currentRoomID:', currentRoomID);
+        console.log('addToDb, myUid:', myUid);
         fetch("/sendMessage", {
             method: "POST",
             headers: {
@@ -257,14 +264,14 @@
         if (e.key === "Enter") {
             let message = inputMessage.value;
             if (message) {
-                addMessage();
+                // addMessage();
                 addToDb(message);
             }
         }
     });
 
     let button = document.getElementById("button");
-    button.addEventListener("click", addMessage);
+    button.addEventListener("click", addToDb);
 
     /**************************************   Display chat message   **************************************/
 
@@ -283,7 +290,9 @@
                 messageDiv.classList.add("received");
             }
             messageDiv.textContent = element.message;
-            chatMessages.appendChild(messageDiv);
+            // ajoute le message en haut de chatMessages
+            chatMessages.prepend(messageDiv);
+            // chatMessages.appendChild(messageDiv);
         });
     }
 
@@ -293,6 +302,11 @@
 
     function loadChatMessages(roomID) {
         currentRoomID = roomID;
+
+        // const chatItem = document.querySelector(`.chat-item.${roomID}`);
+        // if (chatItem) {
+        //     chatItem.classList.remove('unread');
+        // }
 
         // Connect to SSE for this room
         connectToSSE(roomID);
@@ -377,7 +391,7 @@
             });
     }
 
-    /**************************************   websocket   **************************************/
+    /**************************************   Sse   **************************************/
     let eventSource;
 
     function connectToSSE(roomID) {
@@ -405,7 +419,7 @@
             messageDiv.textContent = messageData.message;
 
             // Add to chat
-            chatMessages.appendChild(messageDiv);
+            chatMessages.prepend(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         };
 
@@ -417,20 +431,84 @@
         };
     }
 
-    // Add disconnect when changing rooms or leaving the page
-    function disconnectSSE() {
-        if (eventSource) {
-            eventSource.close();
-            eventSource = null;
+    let notificationEventSource;
+
+    function connectToNotifications() {
+        // Fermer toute connexion existante
+        if (notificationEventSource) {
+            notificationEventSource.close();
+        }
+
+        // Établir une nouvelle connexion
+        notificationEventSource = new EventSource('/notifications');
+
+        // Gérer les notifications entrantes
+        notificationEventSource.onmessage = function (event) {
+            console.log('Notification reçue:', event.data);
+            const notificationData = JSON.parse(event.data);
+
+            // Si c'est une notification de nouveau message
+            if (notificationData.type === 'new_message') {
+                // Si l'utilisateur n'est pas dans cette chatroom, afficher une notification
+                if (currentRoomID != notificationData.roomID) {
+                    // Trouver l'élément de la chatroom dans la liste et le mettre en surbrillance
+                    // const chatItem = document.querySelector(`.chat-item.${notificationData.roomID}`);
+                    // if (chatItem) {
+                    //     chatItem.classList.add('unread');
+
+                    //     // Vous pourriez aussi jouer un son de notification
+                    //     const notificationSound = new Audio('/notification.mp3');
+                    //     notificationSound.play();
+
+                    //     // Afficher une notification dans le navigateur
+                    //     if (Notification.permission === 'granted') {
+                    //         new Notification('Nouveau message', {
+                    //             body: `Nouveau message dans la conversation`,
+                    //             icon: '/images/icon.png'
+                    //         });
+                    //     }
+                    // }
+                    // console.log('chatList:', chatList);
+                    chatList.childNodes.forEach(element => {
+                        if (element.classList[0] == notificationData.roomID) {
+                            element.classList.add('unread');
+                        }
+                    });
+                }
+            }
+        };
+
+        notificationEventSource.onerror = function (error) {
+            console.error('Erreur de connexion aux notifications:', error);
+            notificationEventSource.close();
+            // Essayer de se reconnecter après un délai
+            setTimeout(connectToNotifications, 5000);
+        };
+    }
+
+    // Se déconnecter lors de la fermeture de la page
+    function disconnectNotifications() {
+        if (notificationEventSource) {
+            notificationEventSource.close();
+            notificationEventSource = null;
         }
     }
 
-    window.addEventListener('beforeunload', disconnectSSE);
+    window.addEventListener('beforeunload', disconnectNotifications);
 
+    // Demander la permission pour les notifications du navigateur
+    function requestNotificationPermission() {
+        if (Notification && Notification.permission !== 'granted') {
+            Notification.requestPermission();
+        }
+    }
+
+    // Appeler cette fonction au chargement du document
     document.addEventListener("DOMContentLoaded", async function () {
         myUid = await getCookie();
-        // console.log('myUid:', myUid);
-        // console.log('chat room created');
+        requestNotificationPermission();
+        connectToNotifications();
+
         // createChatRoom();
         // console.log("chat.js loaded");
         loadChatList();
@@ -580,7 +658,7 @@
         border: 1px solid #ddd;
         background: #fff;
         display: flex;
-        flex-direction: column;
+        flex-direction: column-reverse;
         height: 90%;
     }
 
@@ -623,5 +701,22 @@
         border: none;
         padding: 10px;
         cursor: pointer;
+    }
+
+    .chat-item.unread {
+        font-weight: bold;
+        background-color: rgba(255, 107, 107, 0.2);
+        position: relative;
+    }
+
+    .chat-item.unread::after {
+        content: '';
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 10px;
+        height: 10px;
+        background-color: #ff6b6b;
+        border-radius: 50%;
     }
 </style>
