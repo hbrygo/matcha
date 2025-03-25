@@ -776,6 +776,86 @@ Erreurs:
 
 */
 
+<!-- *************************************************** nouveau partir 2 *************************************************** -->
+
+#########################################################################################
+Pour récupérer un utilisateur random via l'API, voici les spécifications :
+#########################################################################################
+
+Endpoint : POST http://localhost:8181/get_random_user
+
+
+Exemples de requêtes curl :
+
+Recherche par UID :
+curl -X POST http://localhost:8181/get_random_user \
+     -H "Content-Type: application/json" \
+     -d '{
+           "uid": "my uid"
+         }'
+
+200 : Utilisateur trouvé, avec les données suivantes :
+{
+    "user": {
+        "uid": "uid"
+        "nom": "Test",
+        "prenom": "User",
+        "dob": "dob", // date of birth
+        "interests": []"interests" // tableau
+        "picture": []"picture" //tableau et ca peut encore changer en fonction de comment est stocker l'image
+        "bio": "bio"
+    }
+}
+
+200 : Utilisateur trouvé (avec ses informations)
+400 : Données manquantes ou format incorrect
+404 : Utilisateur non trouvé -> a definir peut etre 401
+500 : Erreur serveur
+⚠️ Notes importantes :
+
+Vous devez fournir l'uid
+Les informations sensibles (mot de passe) ne sont pas incluses dans la réponse
+Les champs fournis ne doivent pas être vides
+Utilisez de préférence une connexion sécurisée (HTTPS) pour transmettre les données d'authentification
+Renvoie toutes les infos dont j'ai besoin pour presenter le profile a une autre personne
+
+#########################################################################################
+Pour potentiellement matcher via l'API, voici les spécifications :
+#########################################################################################
+
+Endpoint : POST http://localhost:8181/potential_match
+
+
+Exemples de requêtes curl :
+
+Recherche par UID :
+curl -X POST http://localhost:8181/get_user \
+     -H "Content-Type: application/json" \
+     -d '{
+           "my_uid": "my uid"
+           "other_uid": "other uid"
+         }'
+si pas encore dans la table:
+200: potential match add // ou autre phrase, m'en fou
+
+si deja dans la table dans l'autre sens:
+200: it's a match // ou autre phrase, m'en fou
+
+400 : Données manquantes ou format incorrect
+404 : Utilisateur non trouvé -> a definir peut etre 401
+500 : Erreur serveur
+⚠️ Notes importantes :
+
+Vous devez fournir l'uid
+Les informations sensibles (mot de passe) ne sont pas incluses dans la réponse
+Les champs fournis ne doivent pas être vides
+Utilisez de préférence une connexion sécurisée (HTTPS) pour transmettre les données d'authentification
+Renvoie toutes les infos dont j'ai besoin pour presenter le profile a une autre personne
+
+<!-- *************************************************** Changement *************************************************** -->
+
+preference d'un user passe en tabeau de string
+ajout de location stocker en coordonees geographique (string)
 
 
 a definir:
