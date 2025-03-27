@@ -76,13 +76,13 @@ func getUserByUsername(db *sql.DB, username string) (*models.GetUserResponse, er
 	// Récupérer les données de base de l'utilisateur
 	var uid int
 	err := db.QueryRow(`
-        SELECT uid, nom, prenom, dob, gender, preference, bio
+        SELECT uid, nom, prenom, dob, gender, preferences, bio
         FROM users
         WHERE username = ?
     `, username).Scan(&uid, &response.User.Nom,
 		&response.User.Prenom,
 		&response.User.DOB, &response.User.Gender,
-		&response.User.Preference, &response.User.Bio)
+		&response.User.Preferences, &response.User.Bio)
 
 	if err != nil {
 		if err == sql.ErrNoRows {

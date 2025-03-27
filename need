@@ -767,6 +767,109 @@ Erreurs:
 - La réponse inclut tous les utilisateurs actuellement membres de la chatroom
 - Utilisez de préférence une connexion sécurisée (HTTPS) pour ces requêtes
 /************************************************** */
+    /**************** *\
+  /******************** *\
+/************************ *\
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+!!!!!!!!!!!! NOUVEAU !!!!!!!!!
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+################################
+||||||||||||||||||||||||||||||||
+ici en dessous sont les 2 nouveau endpoint 
+
+//*************************************************** */
+/*************************************************** */
+/get_random_user
+Description: Récupère un utilisateur aléatoire compatible avec l'utilisateur spécifié.
+
+Cette fonction permet d'obtenir un profil aléatoire pour la fonctionnalité de découverte
+de l'application de rencontres. Elle renvoie un utilisateur que l'utilisateur actuel 
+n'a pas encore évalué (liké ou disliké).
+
+Entrée:
+{
+  "uid": 42                       // ID de l'utilisateur qui fait la requête
+}
+
+Réponse (succès - 200):
+{
+  "user": {
+    "uid": 15,                      // ID de l'utilisateur aléatoire
+    "nom": "Dupont",
+    "prenom": "Jean",
+    "dob": "1990-01-01",            // date de naissance
+    "gender": "homme",              // genre de l'utilisateur
+    "preferences": [                // tableau des préférences de genre
+      "femme", 
+      "non-binaire"
+    ],
+    "interests": [                  // tableau des centres d'intérêt
+      "sport",
+      "musique",
+      "voyage"
+    ],
+    "pictures": [                   // tableau des chemins vers les photos
+      "/uploads/user123/profile.jpg",
+      "/uploads/user123/photo2.jpg"
+    ],
+    "bio": "Passionné de voyages et de nouvelles rencontres.",
+    "latitude": "48.8566",          // coordonnée géographique (optionnel)
+    "longitude": "2.3522"           // coordonnée géographique (optionnel)
+  }
+}
+
+Erreurs:
+400: Format JSON invalide / UID invalide ou manquant
+404: Utilisateur non trouvé / Aucun utilisateur compatible trouvé
+405: Méthode non autorisée (seule la méthode POST est acceptée)
+500: Erreur serveur
+
+⚠️ Notes importantes:
+- L'identifiant de l'utilisateur (uid) doit être fourni
+- La réponse n'inclut pas les informations sensibles (mot de passe, email)
+- L'algorithme évite de présenter des profils déjà évalués par l'utilisateur
+- Utilisez de préférence une connexion sécurisée (HTTPS) pour ces requêtes
+/************************************************** */
+
+/*************************************************** */
+/*************************************************** */
+/potential_match
+Description: Crée un match potentiel entre deux utilisateurs et détecte les matchs mutuels.
+
+Cette fonction enregistre l'intérêt d'un utilisateur pour un autre. Si l'autre utilisateur
+a également manifesté son intérêt, un match est établi.
+
+Entrée:
+{
+  "my_uid": 42,                   // ID de l'utilisateur qui fait la requête
+  "other_uid": 15                 // ID de l'utilisateur qui intéresse
+}
+
+Réponse (succès - 200, premier like):
+{
+  "status": "success",
+  "message": "Potential match added"
+}
+
+Réponse (succès - 200, match mutuel):
+{
+  "status": "success",
+  "message": "It's a match!"
+}
+
+Erreurs:
+400: Format JSON invalide / UIDs invalides / Match avec soi-même / Match déjà existant
+404: Utilisateur(s) non trouvé(s)
+405: Méthode non autorisée (seule la méthode POST est acceptée)
+500: Erreur serveur
+
+⚠️ Notes importantes:
+- Les deux identifiants d'utilisateurs doivent être fournis et différents
+- Un utilisateur ne peut pas matcher avec lui-même
+- Lorsqu'un match mutuel est détecté, une conversation pourrait être automatiquement créée
+- Utilisez de préférence une connexion sécurisée (HTTPS) pour ces requêtes
+/************************************************** */
+
 
 
 /*************************************************** */

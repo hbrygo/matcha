@@ -114,6 +114,10 @@ def main():
     run_test("test_change_password.py", "Changement de mot de passe", "1", "Test123!@#", "NewPass456!@#")
     run_test("test_get_chatroom_participants.py", "Récupération des participants d'une chatroom", "1")
 
+    # Nouveaux tests à ajouter
+    run_test("test_get_random_user.py", "Récupération d'un utilisateur aléatoire", "1")
+    run_test("test_potential_match.py", "Création d'un match potentiel", "1", "2")
+
     # Résumé final
     end_time = time.time()
     total_duration = round(end_time - start_time, 2)

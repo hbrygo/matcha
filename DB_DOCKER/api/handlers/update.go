@@ -28,13 +28,11 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// verif input
-	if req.Nom == "" || req.Prenom == "" || req.DOB == "" || req.Gender == "" ||
-		req.Preference == "" || req.Bio == "" {
+	if req.Nom == "" || req.Prenom == "" || req.DOB == "" || req.Gender == "" || req.Bio == "" {
 		fmt.Printf("req.nom: %v\n", req.Nom)
 		fmt.Printf("req.prenom: %v\n", req.Prenom)
 		fmt.Printf("req.DOB: %v\n", req.DOB)
 		fmt.Printf("req.Gender: %v\n", req.Gender)
-		fmt.Printf("req.Preference: %v\n", req.Preference)
 		fmt.Printf("req.bio: %v\n", req.Bio)
 		http.Error(w, "Champs obligatoires manquants", http.StatusBadRequest)
 		return
@@ -67,10 +65,11 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 
 	// update base
 	result, err := tx.Exec(`
-        UPDATE users 
-        SET nom = ?, prenom = ?, dob = ?, gender = ?, preference = ?, bio = ?
-        WHERE uid = ?`,
-		req.Nom, req.Prenom, req.DOB, req.Gender, req.Preference, req.Bio, req.UID)
+    	UPDATE users 
+    	SET nom = ?, prenom = ?, dob = ?, gender = ?, bio = ?, latitude = ?, longitude = ?
+    	WHERE uid = ?`,
+		req.Nom, req.Prenom, req.DOB, req.Gender, req.Bio,
+		req.Latitude, req.Longitude, req.UID)
 
 	if err != nil {
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
@@ -115,6 +114,25 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 			return
+		}
+	}
+
+	// Supprimer les anciennes préférences
+	_, err = tx.Exec("DELETE FROM user_preferences WHERE user_uid = ?", req.UID)
+	if err != nil {
+		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
+		return
+	}
+
+	// Insérer les nouvelles préférences (depuis le tableau Preferences)
+	for _, pref := range req.Preferences {
+		if pref != "" {
+			_, err = tx.Exec("INSERT INTO user_preferences (user_uid, preference) VALUES (?, ?)",
+				req.UID, pref)
+			if err != nil {
+				http.Error(w, "Erreur serveur", http.StatusInternalServerError)
+				return
+			}
 		}
 	}
 

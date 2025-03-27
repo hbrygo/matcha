@@ -44,20 +44,18 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	response.User.UID = req.UID
 
 	err = db.QueryRow(`
-    SELECT 
-        COALESCE(nom, '') as nom,
-        COALESCE(prenom, '') as prenom,
-        COALESCE(dob, '') as dob,
-        COALESCE(gender, '') as gender,
-        COALESCE(preference, '') as preference,
-        COALESCE(bio, '') as bio
-    FROM users 
-    WHERE uid = ?`, req.UID).Scan(
+	SELECT 
+		COALESCE(nom, '') as nom,
+		COALESCE(prenom, '') as prenom,
+		COALESCE(dob, '') as dob,
+		COALESCE(gender, '') as gender,
+		COALESCE(bio, '') as bio
+	FROM users 
+	WHERE uid = ?`, req.UID).Scan(
 		&response.User.Nom,
 		&response.User.Prenom,
 		&response.User.DOB,
 		&response.User.Gender,
-		&response.User.Preference,
 		&response.User.Bio,
 	)
 
@@ -77,6 +75,26 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer rows.Close()
+
+	// Après avoir traité les intérêts, récupérer les préférences
+	prefRows, err := db.Query("SELECT preference FROM user_preferences WHERE user_uid = ?", req.UID)
+	if err != nil {
+		http.Error(w, "Server error", http.StatusInternalServerError)
+		return
+	}
+	defer prefRows.Close()
+
+	// Traiter les résultats des préférences
+	var preferences []string
+	for prefRows.Next() {
+		var pref string
+		if err := prefRows.Scan(&pref); err != nil {
+			http.Error(w, "Server error", http.StatusInternalServerError)
+			return
+		}
+		preferences = append(preferences, pref)
+	}
+	response.User.Preferences = preferences
 
 	// process interests results
 	for rows.Next() {
