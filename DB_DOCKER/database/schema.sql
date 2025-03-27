@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS users (
     dob TEXT,
     gender TEXT,
     bio TEXT,
+    -- preference TEXT,
     latitude TEXT,    -- Nouvelle colonne pour coordonnées géographiques
     longitude TEXT,   -- Nouvelle colonne pour coordonnées géographiques
     first_step BOOLEAN DEFAULT FALSE,
