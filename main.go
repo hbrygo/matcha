@@ -109,6 +109,7 @@ func main() {
 	http.HandleFunc("POST /getChatRoomParticipants", chatRoom.GetChatroomParticipants)
 	http.HandleFunc("POST /getUserByName", connection.GetUserByName)
 	http.HandleFunc("POST /getUserByID", connection.GetUserByID)
+	http.HandleFunc("POST /sendMail", connection.SendMail)
 	http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("images"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("js"))))

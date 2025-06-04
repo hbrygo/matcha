@@ -42,6 +42,8 @@
     </nav>
 
     <div class="tinder">
+        <input type="text" id="email" placeholder="Email">
+        <!-- <button id="send">SendMail</button> -->
         <!-- <div class="tinder--status">
             <i class="fa fa-remove"></i>
             <i class="fa fa-heart"></i>
@@ -85,6 +87,38 @@
 </html>
 
 <script>
+    function sendMail() {
+        let email = document.getElementById('email').value;
+        fetch('/sendMail', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "email": email
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    let email = document.getElementById('email');
+    email.addEventListener('keyup', function (event) {
+        if (event.key === 'Enter') {
+            sendMail();
+        }
+    });
+
     function getCookie() {
         return fetch('/getCookie', {
             method: 'GET',

@@ -9,7 +9,42 @@ import (
 	"matcha/cookieGestion"
 	"net/http"
 	"strconv"
+
+	gomail "gopkg.in/mail.v2"
 )
+
+func SendMail(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("send mail\n")
+	// lis le body de la requête
+	var req struct {
+		Email string `json:"email"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	message := gomail.NewMessage()
+
+	// Set email headers
+	message.SetHeader("From", "noreply@gmail.com")
+	message.SetHeader("To", req.Email)
+	message.SetHeader("Subject", "Hello from the Mailtrap team")
+
+	// Set email body
+	message.SetBody("text/plain", "This is the Test Body")
+
+	// Set up the SMTP dialer
+	dialer := gomail.NewDialer("live.smtp.mailtrap.io", 587, "api", "1a2b3c4d5e6f7g")
+
+	// Send the email
+	if err := dialer.DialAndSend(message); err != nil {
+		fmt.Println("Error:", err)
+		panic(err)
+	} else {
+		fmt.Println("Email sent successfully!")
+	}
+}
 
 func Register(w http.ResponseWriter, r *http.Request) {
 	var req struct {
